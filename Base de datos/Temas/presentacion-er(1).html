@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Transformación E/R a Relacional</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.min.css">
+  <style>
+    .reveal section img { background:none; border:none; box-shadow:none; }
+    .reveal h1, .reveal h2, .reveal h3 { color: #13DAEC; }
+    .reveal ul { list-style-type: none; }
+    .reveal ul li { margin: 10px 0; }
+
+    .slide-columns {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-top: 20px;
+      height: calc(100vh - 500px);
+    }
+    .left-column, .right-column {
+      flex: 1;
+      padding: 20px;
+      position: relative;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .right-column {
+      border-left: 2px solid #ccc;
+      font-size: 0.8em;
+    }
+    .tooltip-container {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+    }
+    .tooltip-text {
+      visibility: hidden;
+      width: 700px;
+      background-color: rgba(0,0,0,0.7);
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 15px;
+      position: absolute;
+      z-index: 1;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.6em;
+    }
+    .tooltip-container:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+    .tooltip-container .tooltip-text ul li {
+      list-style-type: circle;
+    }
+    .schema-box {
+      border: 2px solid #666;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+      background-color: #f8f8f8;
+    }
+    .schema-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+      font-size: 1.1em;
+    }
+    .pk {
+      text-decoration: underline;
+    }
+    .fk {
+      font-style: italic;
+      color: #666;
+    }
+    .small-text {
+      font-size: 0.7em;
+      color: #666;
+      margin-top: 5px;
+    }
+    .svg-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .er-image {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .bg-logo {
+      position: fixed;
+      top: 10px;
+      right: 100px;
+      width: 100px;
+      height: 100px;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+    <div class="bg-logo">
+      <svg
+         version="1.1"
+         id="svg18"
+         width="200"
+         height="200"
+         viewBox="0 0 200 200"
+         sodipodi:docname="c3_logo"
+         inkscape:version="1.2.2 (732a01da63, 2022-12-09, custom)"
+         xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+         xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+         xmlns="http://www.w3.org/2000/svg"
+         xmlns:svg="http://www.w3.org/2000/svg">
+        <defs
+           id="defs22" />
+        <sodipodi:namedview
+           id="namedview20"
+           pagecolor="#ffffff"
+           bordercolor="#666666"
+           borderopacity="1.0"
+           inkscape:showpageshadow="2"
+           inkscape:pageopacity="0.0"
+           inkscape:pagecheckerboard="0"
+           inkscape:deskcolor="#d1d1d1"
+           showgrid="false"
+           showguides="true"
+           inkscape:zoom="4.065"
+           inkscape:cx="114.88315"
+           inkscape:cy="100"
+           inkscape:window-width="1850"
+           inkscape:window-height="1016"
+           inkscape:window-x="363"
+           inkscape:window-y="1467"
+           inkscape:window-maximized="1"
+           inkscape:current-layer="g24">
+          <sodipodi:guide
+             position="115.44994,191"
+             orientation="0,-1"
+             id="guide1222"
+             inkscape:locked="false" />
+          <sodipodi:guide
+             position="23,159.16359"
+             orientation="1,0"
+             id="guide1243"
+             inkscape:locked="false" />
+          <sodipodi:guide
+             position="117.02658,36.55078"
+             orientation="0,-1"
+             id="guide1245"
+             inkscape:locked="false" />
+        </sodipodi:namedview>
+        <g
+           inkscape:groupmode="layer"
+           inkscape:label="Image"
+           id="g24">
+          <rect
+             style="opacity:1;fill:#000000;fill-opacity:0.99702;stroke:none;stroke-width:1;stroke-dasharray:none"
+             id="rect1299"
+             width="155"
+             height="155"
+             x="23"
+             y="9" />
+          <path
+             style="fill:none"
+             d="M 23.666667,163.33333 23,162.66667 V 85.833333 9 h 46.224972 46.224968 l -7.45639,7.506491 -7.45639,7.50649 15.46932,15.49351 L 131.4758,55 116,70.5 100.5242,86 116,101.5 131.4758,117 116.2379,132.26173 101,147.52346 v 0.96475 0.96476 l 7.22497,7.27351 L 115.44994,164 H 69.891639 24.333333 Z"
+             id="path345" />
+          <g
+             id="g1241"
+             style="mix-blend-mode:normal;fill:#ffffff;fill-opacity:1;stroke:none;opacity:1"
+             transform="translate(-0.14725,0.06445)">
+            <path
+               id="rect557"
+               style="opacity:0.4;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.31377"
+               d="m 88.718423,-32.506196 -0.0014,65.687734 H 154.40616 V 10.554121 h -43.0617 l 0.001,-43.060317 z"
+               transform="rotate(45)" />
+            <path
+               id="path1118"
+               style="opacity:0.4;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.31377"
+               d="m 117.17383,9.5917969 -16,16.0000001 30.44922,30.447265 -14.44922,14.449219 -16,16 16,15.999999 14.44922,14.44727 -30.44922,30.44922 16,16 46.44922,-46.44922 -30.44922,-30.447269 30.44922,-30.449219 z" />
+          </g>
+          <text
+             xml:space="preserve"
+             style="font-size:22.2045px;line-height:1.25;font-family:sans-serif;stroke-width:0.925188"
+             x="25.699196"
+             y="168.92"
+             id="text1355"
+             transform="scale(0.87462907,1.1433418)"><tspan
+               sodipodi:role="line"
+               id="tspan1353"
+               x="25.699196"
+               y="168.92"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24.6717px;font-family:'URW Gothic';-inkscape-font-specification:'URW Gothic, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.925188">CIFP CARLOS III</tspan></text>
+        </g>
+      </svg>
+    </div>
+  <div class="reveal">
+    <div class="slides">
+      <!-- Portada -->
+      <section>
+        <h1>Transformación de Modelo E/R a Relacional</h1>
+        <h3>Bases de Datos</h3>
+        <p>Desarrollo de Aplicaciones Web / Multiplataforma</p>
+      </section>
+      <section>
+        <section>
+          <h3>Transformación de conjuntos de entidades</h3>
+        </section>
+        <!-- Slide 1: Atributos Simples -->
+        <section>
+          <h2>Transformación de Entidades</h2>
+          <div class="slide-columns">
+            <div class="left-column">
+              <div class="tooltip-container">
+                <div class="svg-container">
+                  <svg viewBox="150 150 700 200" width="600" height="200">
+                    <!-- Entidad centros -->
+                    <rect x="450" y="250" width="100" height="40" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="500" y="275" text-anchor="middle" font-size="16">centros</text>
+                    
+                    <!-- Atributos -->
+                    <ellipse cx="350" cy="200" rx="40" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="350" y="205" text-anchor="middle" font-size="14" text-decoration="underline">codigo</text>
+                    
+                    <ellipse cx="450" cy="200" rx="40" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="450" y="205" text-anchor="middle" font-size="14">nombre</text>
+                    
+                    <ellipse cx="550" cy="200" rx="45" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="550" y="205" text-anchor="middle" font-size="14">titularidad (o)</text>
+                    
+                    <ellipse cx="650" cy="200" rx="35" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="650" y="205" text-anchor="middle" font-size="14">web (o)</text>
+                    
+                    <!-- Líneas de conexión -->
+                    <line x1="350" y1="225" x2="475" y2="250" stroke="black" stroke-width="2"/>
+                    <line x1="450" y1="225" x2="485" y2="250" stroke="black" stroke-width="2"/>
+                    <line x1="550" y1="225" x2="515" y2="250" stroke="black" stroke-width="2"/>
+                    <line x1="650" y1="225" x2="525" y2="250" stroke="black" stroke-width="2"/>
+                  </svg>
+                </div>
+                <div class="tooltip-text">
+                  <p>Cada conjunto de entidades fuertes, se transforma en una tabla.</p>
+                  <p>La clave primaria de la tabla será el identificador del conjunto de entidades.</p>
+                  <p>Cada atributo de la entidad, será una columna de la tabla.</p>
+                </div>
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="schema-box">
+                <div class="schema-title">centros</div>
+                <div>(<span class="pk">codigo</span>, nombre, titularidad, web)</div>
+                <div class="small-text">
+                  - codigo: clave primaria<br>
+                  - titularidad, web: atributos opcionales
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide 2: Atributos Compuestos -->
+        <section>
+          <h2>Transformación de Atributos Compuestos</h2>
+          <div class="slide-columns">
+            <div class="left-column">
+              <div class="tooltip-container">
+                <div class="svg-container">
+                  <svg viewBox="250 150 700 200" width="600" height="300">
+                    <!-- Entidad centros -->
+                    <rect x="450" y="250" width="100" height="40" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="500" y="275" text-anchor="middle" font-size="16">centros</text>
+                    
+                    <!-- Atributos simples -->
+                    <ellipse cx="400" cy="200" rx="40" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="400" y="205" text-anchor="middle" font-size="14" text-decoration="underline">codigo</text>
+                    
+                    <ellipse cx="500" cy="200" rx="40" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="500" y="205" text-anchor="middle" font-size="14">nombre</text>
+                    
+                    <!-- Atributo compuesto direccion -->
+                    <ellipse cx="600" cy="200" rx="45" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="600" y="205" text-anchor="middle" font-size="14">direccion</text>
+                    
+                    <!-- Subatributos de dirección -->
+                    <ellipse cx="740" cy="150" rx="40" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="740" y="155" text-anchor="middle" font-size="12">domicilio</text>
+                    
+                    <ellipse cx="740" cy="200" rx="40" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="740" y="205" text-anchor="middle" font-size="12">codpostal</text>
+                    
+                    <ellipse cx="740" cy="250" rx="40" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="740" y="255" text-anchor="middle" font-size="12">localidad</text>
+                    
+                    <!-- Líneas de conexión -->
+                    <line x1="400" y1="225" x2="475" y2="250" stroke="black" stroke-width="2"/>
+                    <line x1="500" y1="225" x2="500" y2="250" stroke="black" stroke-width="2"/>
+                    <line x1="600" y1="225" x2="525" y2="250" stroke="black" stroke-width="2"/>
+                    <line x1="645" y1="200" x2="700" y2="150" stroke="black" stroke-width="2"/>
+                    <line x1="645" y1="200" x2="700" y2="200" stroke="black" stroke-width="2"/>
+                    <line x1="645" y1="200" x2="700" y2="250" stroke="black" stroke-width="2"/>
+                  </svg>
+                </div>
+                <div class="tooltip-text">
+                  <p>- Los componentes del atributo compuesto se añaden como atributos simples</p>
+                  <p>- Se utiliza el nombre del atributo compuesto como prefijo</p>
+                </div>
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="schema-box">
+                <div class="schema-title">centros</div>
+                <div>(<span class="pk">codigo</span>, nombre, direccion_domicilio, direccion_codpostal, direccion_localidad)</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide 3: Atributos Multivaluados -->
+        <section>
+          <h2>Transformación de Atributos Multivaluados</h2>
+          <div class="slide-columns">
+            <div class="left-column">
+              <div class="tooltip-container">
+                <div class="svg-container">
+                  <svg viewBox="150 150 700 200" width="700" height="200">
+                    <!-- Entidad centros -->
+                    <rect x="450" y="250" width="100" height="40" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="500" y="275" text-anchor="middle" font-size="16">centros</text>
+                    
+                    <!-- Atributos simples -->
+                    <ellipse cx="400" cy="200" rx="40" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="400" y="205" text-anchor="middle" font-size="14" text-decoration="underline">codigo</text>
+                    
+                    <ellipse cx="500" cy="200" rx="40" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="500" y="205" text-anchor="middle" font-size="14">nombre</text>
+                    
+                    <!-- Atributo multivaluado -->
+                    <ellipse cx="600" cy="200" rx="45" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <ellipse cx="600" cy="200" rx="50" ry="30" fill="none" stroke="black" stroke-width="2"/>
+                    <text x="600" y="205" text-anchor="middle" font-size="14">servicios</text>
+                    
+                    <!-- Líneas de conexión -->
+                    <line x1="400" y1="225" x2="475" y2="250" stroke="black" stroke-width="2"/>
+                    <line x1="500" y1="225" x2="500" y2="250" stroke="black" stroke-width="2"/>
+                    <line x1="600" y1="230" x2="525" y2="250" stroke="black" stroke-width="2"/>
+                  </svg>
+                </div>
+                <div class="tooltip-text">
+                  <p>- Se crea una nueva tabla para el atributo multivaluado</p>
+                  <p>- La clave primaria es la combinación de la FK y el valor del atributo</p>
+                </div>
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="schema-box">
+                <div class="schema-title">centros</div>
+                <div>(<span class="pk">codigo</span>, nombre)</div>
+              </div>
+              <div class="schema-box">
+                <div class="schema-title">servicios_centro</div>
+                <div>(<span class="pk"><span class="fk">codigo_centro</span>, servicio</span>)</div>
+                <div class="small-text">
+                  FK: codigo_centro REF centros(codigo)
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide 4: Entidades Débiles -->
+        <section>
+          <h2>Transformación de Entidades Débiles</h2>
+          <div class="slide-columns">
+            <div class="left-column">
+              <div class="tooltip-container">
+                <div class="svg-container">
+                  <svg viewBox="150 150 500 500" width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="352.46243" y="252.60582" width="100" height="40" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="402.46243" y="277.6058" text-anchor="middle" font-size="16px">centros</text>
+                    <ellipse cx="302.46243" cy="202.60582" rx="40" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="302.46243" y="207.60582" text-anchor="middle" font-size="14px" text-decoration="underline">codigo</text>
+                    <rect x="342.62436" y="397.76834" width="119.67525" height="49.675255" fill="#ffffff" stroke="#000000" stroke-width="2.32474"/>
+                    <rect x="347.46243" y="402.6058" width="110" height="40" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="402.46243" y="427.6058" text-anchor="middle" font-size="13.3333px" style="font-family:sans-serif">subvenciones</text>
+                    <ellipse cx="302.46243" cy="502.6058" rx="40" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="302.46243" y="507.6058" text-anchor="middle" font-size="14px" text-decoration="underline">anyo</text>
+                    <ellipse cx="502.46243" cy="502.6058" rx="45" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="502.46243" y="507.6058" text-anchor="middle" font-size="14px">fecha_pago</text>
+                    <polygon points="475,275 500,260 525,275 500,290" fill="#ffffff" stroke="#000000" stroke-width="2" transform="translate(-97.537579,64.005637)"/>
+                    <polygon points="470,275 500,255 530,275 500,295" fill="none" stroke="#000000" stroke-width="2" transform="translate(-97.537579,64.005637)"/>
+                    <text x="402.46243" y="342.00562" text-anchor="middle" font-size="10.6667px" style="font-family:sans-serif">recibe</text>
+                    <line x1="302.46243" y1="227.60582" x2="377.46243" y2="252.60582" stroke="#000000" stroke-width="2"/>
+                    <line x1="402.46243" y1="292.6058" x2="402.46243" y2="319.6308" stroke="#000000" stroke-width="2.32487"/>
+                    <line x1="402.46243" y1="358.10797" x2="402.46243" y2="397.65555" stroke="#000000" stroke-width="1.62373"/>
+                    <line x1="302.40884" y1="477.71414" x2="372.77048" y2="447.90771" stroke="#000000" stroke-width="1.78767"/>
+                    <line x1="502.51062" y1="477.70251" x2="431.15555" y2="447.45453" stroke="#000000" stroke-width="1.81353"/>
+                    <line x1="392.46243" y1="304.2446" x2="412.46243" y2="304.2446" stroke="#000000" stroke-width="2"/>
+                    <line x1="392.46243" y1="297.6058" x2="412.46243" y2="297.6058" stroke="#000000" stroke-width="2"/>
+                    <line x1="392.46243" y1="398.50027" x2="402.46243" y2="388.50027" stroke="#000000" stroke-width="2"/>
+                    <line x1="402.46243" y1="398.50027" x2="402.46243" y2="388.50027" stroke="#000000" stroke-width="2"/>
+                    <line x1="412.46243" y1="398.50027" x2="402.46243" y2="388.50027" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="483.81381" cy="205.44403" rx="40" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="483.81381" y="210.44403" text-anchor="middle" font-size="14px">nombre</text>
+                    <line x1="486.99536" y1="230.37294" x2="411.93661" y2="252.76097" stroke="#000000" stroke-width="1.89338"/>
+                  </svg>
+                </div>
+                <div class="tooltip-text">
+                  <p style="text-align: left">La clave primaria de la tabla correspondiente a la entidad débil incluirá:</p>
+                  <ul>
+                    <li>el identificador de la entidad fuerte.</li>
+                    <li>El discriminador de la entidad débil.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="schema-box">
+                <div class="schema-title">centros</div>
+                <div>(<span class="pk">codigo</span>)</div>
+              </div>
+              <div class="schema-box">
+                <div class="schema-title">subvenciones</div>
+                <div>(<span class="pk"><span class="fk">codigo_centro</span>, anyo</span>, fecha_pago)</div>
+                <div class="small-text">
+                  FK: codigo_centro REF centros(codigo)
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide 5: Atributos Derivados -->
+        <section>
+          <h2>Transformación de Atributos Derivados</h2>
+          <div class="slide-columns">
+            <div class="left-column">
+              <div class="tooltip-container">
+                <div class="svg-container">
+                  <svg viewBox="150 150 700 300" width="700" height="300">
+                    <!-- Entidad subvenciones -->
+                    <rect x="450" y="250" width="100" height="40" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="500" y="275" text-anchor="middle" font-size="16">subvenciones</text>
+                    
+                    <!-- Atributos normales -->
+                    <ellipse cx="400" cy="200" rx="40" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="400" y="205" text-anchor="middle" font-size="14" text-decoration="underline">anyo</text>
+                    
+                    <ellipse cx="600" cy="200" rx="45" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="600" y="205" text-anchor="middle" font-size="14">fecha_pago</text>
+                    
+                    <!-- Atributo derivado -->
+                    <ellipse cx="500" cy="350" rx="60" ry="25" fill="white" stroke="black" stroke-width="2" stroke-dasharray="5,5"/>
+                    <text x="500" y="355" text-anchor="middle" font-size="14">cantidad_total</text>
+                    
+                    <!-- Líneas de conexión -->
+                    <line x1="400" y1="225" x2="475" y2="250" stroke="black" stroke-width="2"/>
+                    <line x1="600" y1="225" x2="525" y2="250" stroke="black" stroke-width="2"/>
+                    <line x1="500" y1="290" x2="500" y2="325" stroke="black" stroke-width="2" stroke-dasharray="5,5"/>
+                  </svg>
+                </div>
+                <div class="tooltip-text">
+                  <p>- Los atributos derivados no se incluyen en el esquema relacional</p>
+                  <p>- Se pueden implementar como vistas o procedimientos almacenados</p>
+                </div>
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="schema-box">
+                <div class="schema-title">subvenciones</div>
+                <div>(<span class="pk">anyo</span>, fecha_pago)</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+      <section>
+        <section>
+          <h3>Transformación de conjuntos de relaciones</h3>
+        </section>
+            <!-- Relación 1:N -->
+        <section>
+          <h2>Transformación de Relación 1:N</h2>
+          <div class="slide-columns">
+            <div class="left-column">
+              <div class="tooltip-container">
+                <div class="svg-container">
+                  <svg viewBox="150 150 700 200" width="500" height="200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Entidad centros -->
+                    <rect x="250" y="280" width="120" height="50" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="310" y="310" text-anchor="middle" font-size="20">centros</text>
+                    
+                    <!-- Atributos de centros -->
+                    <ellipse cx="200" cy="200" rx="50" ry="30" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="200" y="205" text-anchor="middle" font-size="18" text-decoration="underline">codigo</text>
+                    
+                    <ellipse cx="310" cy="200" rx="50" ry="30" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="310" y="205" text-anchor="middle" font-size="18">nombre</text>
+                    
+                    <ellipse cx="420" cy="200" rx="55" ry="30" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="420" y="205" text-anchor="middle" font-size="18">direccion</text>
+                    
+                    <!-- Líneas de conexión centros -->
+                    <line x1="200" y1="230" x2="280" y2="280" stroke="black" stroke-width="2"/>
+                    <line x1="310" y1="230" x2="310" y2="280" stroke="black" stroke-width="2"/>
+                    <line x1="420" y1="230" x2="340" y2="280" stroke="black" stroke-width="2"/>
+                    
+                    <!-- Relación incluye -->
+                    <polygon points="450,305 500,320 550,305 500,285" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="500" y="305" text-anchor="middle" font-size="16">incluye</text>
+                    
+                    <!-- Entidad departamentos -->
+                    <rect x="650" y="280" width="130" height="50" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="715" y="310" text-anchor="middle" font-size="20">departamentos</text>
+                    
+                    <!-- Atributos de departamentos -->
+                    <ellipse cx="600" cy="200" rx="70" ry="30" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="600" y="205" text-anchor="middle" font-size="16" text-decoration="underline">id_departamento</text>
+                    
+                    <ellipse cx="800" cy="200" rx="50" ry="30" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="800" y="205" text-anchor="middle" font-size="18">nombre</text>
+                    
+                    <!-- Líneas de conexión departamentos -->
+                    <line x1="600" y1="230" x2="680" y2="280" stroke="black" stroke-width="2"/>
+                    <line x1="800" y1="230" x2="740" y2="280" stroke="black" stroke-width="2"/>
+                    
+                    <!-- Líneas de relación con notación crow's foot -->
+                    <!-- Lado departamentos (0..N) - círculo y pata de gallo -->
+                    <line x1="550" y1="305" x2="640" y2="305" stroke="black" stroke-width="2"/>
+                    <!-- círculo para opcional (0) -->
+                    <circle cx="635" cy="305" r="5" fill="white" stroke="black" stroke-width="2"/>
+                    <!-- pata de gallo para muchos (N) -->
+                    <line x1="650" y1="295" x2="640" y2="305" stroke="black" stroke-width="2"/>
+                    <line x1="650" y1="305" x2="640" y2="305" stroke="black" stroke-width="2"/>
+                    <line x1="650" y1="315" x2="640" y2="305" stroke="black" stroke-width="2"/>
+                    
+                    <!-- Lado centros (1..1) - dos líneas perpendiculares -->
+                    <line x1="370" y1="305" x2="450" y2="305" stroke="black" stroke-width="2"/>
+                    <line x1="640" y1="305" x2="650" y2="305" stroke="black" stroke-width="2"/>
+                    <line x1="380" y1="295" x2="380" y2="315" stroke="black" stroke-width="2"/>
+                    <line x1="390" y1="295" x2="390" y2="315" stroke="black" stroke-width="2"/>
+                  </svg>
+                </div>
+                <div class="tooltip-text">
+                  <p>En una relación 1:N, la clave foránea se añade como atributo en la entidad del lado N (muchos).</p>
+                  <p>La clave foránea referencia a la clave primaria de la entidad del lado 1.</p>
+                </div>
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="schema-box">
+                <div class="schema-title">centros</div>
+                <div>(<span class="pk">codigo</span>, nombre, direccion)</div>
+              </div>
+              <div class="schema-box">
+                <div class="schema-title">departamentos</div>
+                <div>(<span class="pk">id_departamento</span>, nombre, <span class="fk">codigo_centro</span>)</div>
+                <div class="small-text">FK: codigo_centro REF centros(codigo)</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide 7: Relación N:M -->
+        <section>
+          <h2>Transformación de Relación N:M</h2>
+          <div class="slide-columns">
+            <div class="left-column">
+              <div class="tooltip-container">
+                <div class="svg-container">
+                  <svg viewBox="150 150 700 200" width="700" height="200" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="239.01448" y="250.04346" width="130.94205" height="39.913078" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="304.41998" y="275" text-anchor="middle" font-size="16px">departamentos</text>
+                    <ellipse cx="253.18187" cy="200" rx="60" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="253.18187" y="205" text-anchor="middle" font-size="14px" text-decoration="underline">id_departamento</text>
+                    <ellipse cx="353.18185" cy="200" rx="40" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="353.18185" y="205" text-anchor="middle" font-size="14px">nombre</text>
+                    <polygon points="500,270 550,250 500,230 450,250" fill="#ffffff" stroke="#000000" stroke-width="2" transform="translate(0,20.112243)"/>
+                    <text x="500" y="273.56161" text-anchor="middle" font-size="14px">pertenece</text>
+                    <rect x="650" y="250" width="100" height="40" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="700" y="275" text-anchor="middle" font-size="16">docentes</text>
+                    <ellipse cx="600" cy="200" rx="35" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="600" y="205" text-anchor="middle" font-size="14" text-decoration="underline">nrp</text>
+                    <ellipse cx="700" cy="200" rx="40" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="700" y="205" text-anchor="middle" font-size="14">nombre</text>
+                    <ellipse cx="800" cy="200" rx="40" ry="25" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="800" y="205" text-anchor="middle" font-size="14">apellidos</text>
+                    <line x1="370" y1="270" x2="450" y2="270" stroke="black" stroke-width="2"/>
+                    <line x1="550" y1="270" x2="650" y2="270" stroke="black" stroke-width="2"/>
+                    <line x1="370.716" y1="260" x2="380.716" y2="270" stroke="#000000" stroke-width="2"/>
+                    <line x1="370.716" y1="270" x2="380.716" y2="270" stroke="#000000" stroke-width="2"/>
+                    <line x1="370.716" y1="280" x2="380.716" y2="270" stroke="#000000" stroke-width="2"/>
+                    <circle cx="386.49576" cy="270" r="5" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <line x1="649.34436" y1="260" x2="639.34436" y2="270" stroke="#000000" stroke-width="2"/>
+                    <line x1="649.34436" y1="270" x2="639.34436" y2="270" stroke="#000000" stroke-width="2"/>
+                    <line x1="649.34436" y1="280" x2="639.34436" y2="270" stroke="#000000" stroke-width="2"/>
+                    <circle cx="633.4978" cy="270.37085" r="5" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <path d="m 254.42049,225.2324 44.35077,25.40298" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="m 354.07189,225.02967 -43.63132,24.36214" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="m 797.23596,224.63163 -76.16199,24.75523" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="m 700.30657,224.55251 -0.24229,25.40298" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="m 623.95668,218.49041 54.19303,31.41811" style="fill:none;stroke:#000000;stroke-width:2"/>
+                  </svg>
+                </div>
+                <div class="tooltip-text">
+                  <p>Las entidades generan sus respectivas tablas</p>
+                  <p>Se genera una tabla adicional correspondiente a la relación</p>
+                  <p style="font-size:0.6em">La clave primaria de esta <strong>tabla</strong> intermedia será el conjunto de los identificadores de las entidades que participan en la relación</p>
+                </div>
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="schema-box">
+                <div class="schema-title">departamentos</div>
+                <div>(<span class="pk">id_departamento</span>, nombre)</div>
+              </div>
+              <div class="schema-box">
+                <div class="schema-title">docentes</div>
+                <div>(<span class="pk">nrp</span>, nombre, apellidos)</div>
+              </div>
+              <div class="schema-box">
+                <div class="schema-title">pertenece</div>
+                <div>(<span class="pk"><span class="fk">id_departamento</span>, <span class="fk">nrp</span></span>)</div>
+                <div class="small-text">
+                  FK: id_departamento REF departamentos<br>
+                  FK: nrp REF docentes
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide 8: Relación 1:1 -->
+        <section>
+          <h2>Transformación de Relación 1:1</h2>
+          <div class="slide-columns">
+            <div class="left-column">
+              <div class="tooltip-container">
+                <div class="svg-container">
+                  <svg viewBox="150 150 700 200" width="700" height="200" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="235.5468" y="250.05678" width="134.39642" height="39.886433" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="301.65347" y="275" text-anchor="middle" font-size="16px">departamentos</text>
+                    <ellipse cx="260.92276" cy="186.26878" rx="60" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="260.92276" y="191.26878" text-anchor="middle" font-size="12px" style="font-family:sans-serif;text-decoration:underline" text-decoration="underline">id_departamento</text>
+                    <ellipse cx="364.92276" cy="186.26878" rx="40" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="364.92276" y="191.26878" text-anchor="middle" font-size="14px">nombre</text>
+                    <polygon points="500,270 550,250 500,230 450,250" fill="#ffffff" stroke="#000000" stroke-width="2" transform="translate(0,20.038074)"/>
+                    <text x="500" y="273.5542" text-anchor="middle" font-size="14px">jefatura</text>
+                    <rect x="650" y="250" width="100" height="40" fill="white" stroke="black" stroke-width="2"/>
+                    <text x="700" y="275" text-anchor="middle" font-size="16">docentes</text>
+                    <line x1="370" y1="270" x2="450" y2="270" stroke="black" stroke-width="2"/>
+                    <line x1="550" y1="270" x2="650" y2="270" stroke="black" stroke-width="2"/>
+                    <line x1="375.38544" y1="260" x2="375.38544" y2="280" stroke="#000000" stroke-width="2"/>
+                    <circle cx="385" cy="270" r="5" fill="white" stroke="black" stroke-width="2"/>
+                    <line x1="644" y1="260" x2="644" y2="280" stroke="#000000" stroke-width="2"/>
+                    <line x1="639" y1="260" x2="639" y2="280" stroke="#000000" stroke-width="2"/>
+                    <path d="m 260.39483,211.99565 25.4957,38.31215" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="m 362.21816,211.58772 -52.04955,38.56062" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <ellipse cx="614.22876" cy="186.26878" rx="38.709305" ry="25.19368" fill="#ffffff" stroke="#000000" stroke-width="1.61264"/>
+                    <text x="614.22876" y="191.26878" text-anchor="middle" font-size="14.6667px" style="font-family:sans-serif;text-decoration:underline">nrp</text>
+                    <ellipse cx="695.98047" cy="186.26878" rx="40" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="695.98047" y="191.26878" text-anchor="middle" font-size="14px">nombre</text>
+                    <path d="m 620.00223,211.57412 55.19432,38.73368" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="m 699.11491,211.32071 0.35972,38.82763" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <ellipse cx="780.2171" cy="186.59904" rx="40" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="780.2171" y="191.59904" text-anchor="middle" font-size="14px">apellidos</text>
+                    <path d="M 783.35156,211.65098 720.08024,249.7324" style="fill:none;stroke:#000000;stroke-width:2"/>
+                  </svg>
+                </div>
+                <div class="tooltip-text">
+                  <p>La clave foránea se coloca en la entidad con participación total</p>
+                  <p>Si ambas son totales, se elige la más natural</p>
+                  <p>Si ninguna es total, se genera una tabla intermedia</p>
+                </div>
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="schema-box">
+                <div class="schema-title">departamentos</div>
+                <div>(<span class="pk">id_departamento</span>, nombre, <span class="fk">nrp_jefe</span>)</div>
+                <div class="small-text">
+                  FK: nrp_jefe REF docentes
+                </div>
+              </div>
+              <div class="schema-box">
+                <div class="schema-title">docentes</div>
+                <div>(<span class="pk">nrp</span>, nombre, apellidos)</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide 9: Relación Ternaria -->
+        <section>
+          <h2>Transformación de Relación Ternaria</h2>
+          <div class="slide-columns">
+            <div class="left-column">
+              <div class="tooltip-container">
+                <div class="svg-container">
+                  <svg viewBox="150 150 700 350" width="700" height="350" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="440.49017" y="269.77454" width="134.39642" height="39.886433" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="506.59686" y="294.71774" text-anchor="middle" font-size="16px">centros</text>
+                    <ellipse cx="465.86615" cy="205.98654" rx="60" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="465.86615" y="210.98654" text-anchor="middle" font-size="14.6667px" style="font-family:sans-serif;text-decoration:underline">codigo</text>
+                    <ellipse cx="569.86615" cy="205.98654" rx="40" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="569.86615" y="210.98654" text-anchor="middle" font-size="14px">nombre</text>
+                    <polygon points="500,270 550,250 500,230 450,250" fill="#ffffff" stroke="#000000" stroke-width="2" transform="translate(6.7063505,185.36294)"/>
+                    <text x="506.70636" y="438.87906" text-anchor="middle" font-size="14px">oferta</text>
+                    <rect x="656.77942" y="415.39792" width="115.56519" height="39.853905" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="712.70636" y="440.32486" text-anchor="middle" font-size="16px">estudios</text>
+                    <line x1="556.70636" y1="435.32486" x2="656.70636" y2="435.32486" stroke="#000000" stroke-width="2"/>
+                    <path d="m 465.3382,231.71341 25.4957,38.31215" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="M 567.16153,231.30548 515.11198,269.8661" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <ellipse cx="620.93512" cy="351.59363" rx="56.566818" ry="25.028479" fill="#ffffff" stroke="#000000" stroke-width="1.94304"/>
+                    <text x="620.93512" y="356.59363" text-anchor="middle" font-size="14.6667px" style="font-family:sans-serif;text-decoration:underline">id_estudio</text>
+                    <ellipse cx="758.68683" cy="351.59363" rx="40" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="758.68683" y="356.59363" text-anchor="middle" font-size="14px">nombre</text>
+                    <path d="m 626.70858,376.89898 55.19432,38.73368" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="M 759.09004,377.55409 706.18098,415.4732" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="m 506.77207,311.00056 0.84431,104.53111" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <rect x="262.51727" y="415.39792" width="115.56519" height="39.853905" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="318.44421" y="440.32486" text-anchor="middle" font-size="16px">modalidades</text>
+                    <line x1="461.37921" y1="435.32486" x2="378.46182" y2="435.32486" stroke="#000000" stroke-width="1.82118"/>
+                    <ellipse cx="226.67296" cy="351.59363" rx="56.566818" ry="25.028479" fill="#ffffff" stroke="#000000" stroke-width="1.94304"/>
+                    <text x="226.67296" y="356.59363" text-anchor="middle" font-size="14.6667px" style="font-family:sans-serif;text-decoration:underline">id_modalidad</text>
+                    <ellipse cx="364.42468" cy="351.59363" rx="40" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="364.42468" y="356.59363" text-anchor="middle" font-size="14px">nombre</text>
+                    <path d="m 232.44644,376.89898 55.19432,38.73368" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="M 364.8279,377.55409 311.91884,415.4732" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="m 378.1413,429.08229 6.35237,6.35237 -6.1522,6.1522" style="fill:none;stroke:#000000;stroke-width:1px"/>
+                    <path d="m 513.10289,309.81293 -6.35237,6.35237 -6.1522,-6.1522" style="fill:none;stroke:#000000;stroke-width:1px"/>
+                    <path d="m 656.6267,429.08229 -6.35237,6.35237 6.1522,6.1522" style="fill:none;stroke:#000000;stroke-width:1px"/>
+                  </svg>
+                </div>
+                <div class="tooltip-text">
+                  <p>Cada entidad genera una tabla</p>
+                  <p>Se genera una tabla intermedia para la relación</p>
+                  <p style="font-size:0.6em">La clave ajena de la tabla intermedia será la formada por las claves primarias de las entidades que participan con cardinalidad N</p>
+                </div>
+              </div>
+            </div>
+            <div class="right-column" style="font-size:0.5em">
+              <div class="schema-box" style="margin:5px; width: 200%;">
+                <div class="schema-title">centros</div>
+                <div>(<span class="pk">codigo</span>, nombre)</div>
+              </div>
+              <div class="schema-box" style="margin:5px; width: 200%;">
+                <div class="schema-title">modalidades</div>
+                <div>(<span class="pk">id_modalidad</span>, nombre)</div>
+              </div>
+              <div class="schema-box" style="margin:5px; width: 200%;">
+                <div class="schema-title">estudios</div>
+                <div>(<span class="pk">id_estudio</span>, nombre)</div>
+              </div>
+              <div class="schema-box" style="margin:5px; width: 200%;">
+                <div class="schema-title">ofertas</div>
+                <div>(<span class="pk"><span class="fk">codigo_centro</span>, <span class="fk">id_modalidad</span>, <span class="fk">id_estudio</span></span>)</div>
+                <div class="small-text">
+                  FK: codigo_centro REF centros<br>
+                  FK: id_modalidad REF modalidades<br>
+                  FK: id_estudio REF estudios
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide 10: Relación Generalización -->
+        <section>
+          <h2>Transformación de Relación Generalización</h2>
+          <div class="slide-columns">
+            <div class="left-column">
+              <div class="tooltip-container">
+                <div class="svg-container">
+                  <img src="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAmIAAAH3CAYAAAAYFTOLAAAgAElEQVR4XuydCbxO1f7/vzLElTlD1KXMMpUxImOSIUKIMlW4KrcBUREVl6KUiuJGcSnTLYRkDFGkKLMimechc/x/n+/9P6eD85zzDHtYe+/Per2e11PO3mt4f9be6/OsMdWl/wvCQAIkQAIkQAIkQAIk4DiBVDRijjNngiRAAiRAAiRAAiSgBGjEWBFIgARIgARIgARIwCUCNGIugWeyJEACJEACJEACJEAjxjpAAiRAAiRAAiRAAi4RoBFzCTyTJQESIAESIAESIAEaMdYBEiABEiABEiABEnCJAI2YS+CZLAmQAAmQAAmQAAnQiLEOkAAJkAAJkAAJkIBLBGjEXALPZEmABEiABEiABEiARox1gARIgARIgARIgARcIkAj5hJ4JksCJEACJEACJEACNGKsAyRAAiRAAiRAAiTgEgEaMZfAM1kSIAESIAESIAESoBFjHSABEiABEiABEiABlwjQiLkEnsmSAAmQAAmQAAmQAI0Y6wAJkAAJkAAJkAAJuESARswl8EyWBEiABEiABEiABGjEWAdIgARIgARIgARIwCUCNGIugWeyJEACJEACJEACJEAjxjpAAiRAAiRAAiRAAi4RoBFzCTyTJQESIAESIAESIAEaMdYBEiABEiABEiABEnCJAI2YS+CZLAmQAAmQAAmQAAnQiLEOkAAJkAAJkAAJkIBLBGjEXALPZEmABEiABEiABEiARox1gAQiIHD69Gk5fvy4fo4dOyYnTpwQ/Nu5c+fkwoULcv78ef1GSJMmjaRNm1a/06VLJxkyZJBMmTJJlixZJHPmzPqdPn36CFLlJeEIUA+z6gb1MEsP5sZbBGjEvKUXc2sjgcOHD8u2bdtk586dsnv3btmzZ4/s27dPjh49Kn/88cdlRipnzpySKlUqNVwh04VvhJApwzc+ly5dkgMHDqiBCxm5jBkzStasWSVPnjz6ufHGG/VTsGBByZYtm42l9E7U1MMsraiHWXowN/4hQCPmHy1ZkigInDp1StauXStbtmzRbxgwBBihwoULS44cORJMUt68ebVXy8qA9GH09u7dq59Dhw5pXpAPGDzko1SpUpqXMmXKWJ6+lWWxIi7qYQVF6+KgHtaxZEwkkBIBGrGUCPHvviGwcuVKWbNmjaxevVp7vEqXLi2VKlWSfPnyqfHJnj27EWUN9Tzs2rVLVqxYoUYRvWUVKlSQsmXL6rcfAvUwS0XqYZYezE1wCNCIBUfrwJX07NmzsnDhQlm+fLl+ypcvL1WqVJESJUpIoUKFPMUDvWUbNmyQpUuXqplEOapWrSo1atTQeWheCNTDLJWoh1l6MDfBJUAjFlztfVty/LKfM2eOfPPNN1K7dm3t9YJpSZ06tS/KjEUBMJYo57x586RatWpSr149qVixopHlox5myUI9zNKDuSEBGjHWAV8QwOrFTz75RBYtWiSYSA9jUrNmTV+ULaVCLFiwQObOnSsY0rzrrrukZcuWuoDAzUA9qIeb9S9x2iY+H6awYT7MIEAjZoYOzEWMBPbv3y+TJk2SmTNnSqtWraRZs2a6ujGI4ciRIzJ16lT59NNPpVGjRvLggw/qogMnA/X4izb1cLLmpZyWCXqknEteEUQCNGJBVN0HZb548aK89957snXrVqlevbo0bdrUB6WyrgjTpk2TxYsXS7FixaRr167WRRwmJuqRPGLqYXsVjCoBp/WIKnO8OHAEaMQCJ7n3Czx9+nQZMWKEGozmzZt7v0A2lgC9YzCs3bt3lyZNmtiSEvWIHCv1iJyVE1c6oYcT5WAa3iZAI+Zt/QKVe+y79dJLL+nk9LZt2waq7PEW9qOPPtLFC/369dP90awI1CN2itQjdnZ23GmHHnbkk3H6kwCNmD919V2p0OsyefJkNRJFixb1XfmcKNDGjRvVyLZu3Vruu+++uJKkHnHh05upR/wMrYzBSj2szBfj8j8BGjH/a+z5Eg4aNEg3NH3ooYc8XxYTCjBu3Dg9uqlnz54xZYd6xIQt7E3Uw1qe8cYWrx7xps/7g0eARix4mnuqxN26ddPem7vvvttT+TY9s7Nnz9YtL958882osko9osIV8cXUI2JUjlwYqx6OZI6J+I4AjZjvJPVPgR577DF55JFHjN2o1OuksSnsxx9/rJP5IwnUIxJKsV9DPWJnZ8ed0ephRx4YZzAI0IgFQ2fPlbJ9+/bSv39/yZ8/v+fy7qUM//LLL/Lqq6/KmDFjks029XBGVerhDOdIU4lUj0jj43UkkBQBGjHWC+MI9O3bVx544AEpWbKkcXnzY4ZwqDgm32MhRFKBejirOvVwlndKqaWkR0r38+8kkBIBGrGUCPHvjhLAUNn58+elY8eOjqYb9MQ++OADyZgxo+7GnzhQD3dqBvVwh3u4VMPpYVYumRuvEqAR86pyPsz3hg0bdIsK9MAwOE8APWJt2rSRIkWKaOLUw3kNEqdIPdzlf2XqV+phVu6YGy8ToBHzsno+y/vTTz+tW1TcdtttPiuZN4qzatUqPTj9tdde0wxTD3d1ox7u8r8y9Sv1MCt3zI2XCdCIeVk9H+X9hx9+kAkTJiSYACuLNnjwYDl48GCSccP0jR8/Xm699VYrk5TevXvrMF+pUqWiijeUn5MnT8rjjz8u3333XVT3x3sxzFeHDh3kzz//tE2PePMY6/2oX3PmzNGVol4JbuiRIUMGfV4wVB1tGD58uGzfvl3eeOONaG/1xPUhPaJ9rj1ROGbSNQI0Yq6hZ8KJCbz88stStWpVqVWrluVgduzYIefOnZPChQtfFbddRqxu3brywgsvyF133RVVeUL5uemmm3Tn9YoVK0Z1f7wXz5s3T80fjJhdesSbx1jvj9SInT17Vq699tpYk7H0Pjf0WLhwoVSvXl1Sp04ddVn8bsRCevTp0ydqNryBBMIRoBFj3TCCwD333COfffaZLQ3g0KFDZe/evdojhkbmiSeekAMHDuiB4YsXL9bhuJR6xN5++239lZ8qVSq971//+pf+98iRI3X7hxMnTkiNGjXkP//5jyA99MLlypVLe18WLVokZ86cEZhNBPwNPV74/3D5wfVdunRRU3Tx4kVd0fjhhx/q/ThnE2nG0lCmJPapU6ekRYsWasTs0iO5PLzzzjuCVWpr1qwRGOjKlSsL/g0nK/z000/SuXNnWb9+vR5zhf3PYFx//vlnHdLOnj273lesWDE9yglzDX/77TftWUQPJYzYlClTlBu4Yy7c6NGjVXsYCJydiTQKFCigh8qH0zwlhlb+3S49kuOcKVMmfV6wkTLqGrYuQUCdhzao43hucJA8TmiAaYMW4B+JEYtUL6QZLh3UT/zQwRmRMM1PPfWUPtd4LsI9a1boEtJj1qxZVkTHOEhACdCIsSK4TuDHH38UvNjs+pUZMmLPP/+83HLLLdr4Nm7cWAYMGKBmCI1vckbsyy+/lK5du2qjkCVLFmnYsGFCI3XzzTfL6tWrJV++fAIziUbr0UcflcQ9YuEah2eeeSZsfhIbMRy5AhOInfBhIurXry/YXBXp2BFgXNCogo/TAQYBDfy3334rJUqUkPvvv1/KlSunRrR48eJ6LBNW1MJUwWht2bJFNm/erFudYAuOevXqSe3atWXnzp2CerVr1y41czDe+DuMxdSpU6VRo0aCo5o+/fRTWbdunbz11lu6bx2ugbFAz0dSmmNoyulghx7hOON5CBmxsWPHqmGFeUW444471NCip7RQoUIyY8YM/bfnnntONm3aJJ9//nnERiwSvU6fPh02nVGjRumUgpkzZ8rvv/+u+UBeMfRspxEDh1deeUWffw5POv0k+Dc9GjH/auuZkn311VeyYsUK/YVrRwgZMTTI6OVADxUChqBy5MghK1euTNaIPfzww9rLEjKKEydO1F4vGDMYsHfffVcNQ/r06ROyH4kRK1u2bNj8JDZiMA0tW7ZUE4EA84ANWGHM7Agwk3//+99dM2IwWdjVHAFssXoTeQKDrVu3JhQZRg0cMmfOLHXq1JHdu3drLyV0Qs9F6PgmlOXrr7+WpUuXquGC3ggXLlzQXkuYPvwQQEP+3//+V/8WTnNM2HY62KEHjFhSnPF8hIzY0aNH1QzDxB4+fFifEfQawgBNmjRJ8AMFAWYXjHH9v//97xTniKFHLBK95s+fHzYd/JCCKcazgbBgwQLtycSzabcRs3MahdN1i+mZQYBGzAwdAp0LGAu86DEUZ0cIGTG8qNGQhob4kBaGp9ALklyPWM2aNeXXX3/VBioUYMDw63vatGk6ZINeFfTGoCHD/K7kjBiu/+OPPyRPnjxh85PYiFWoUEGNH3pqEGAkcPQT0rQjoKetTJkyOqTndIBBQLkw5IuAng/0WKK3EQzQ4IYCegbBASYZw8UwbAgvvviimmL0gCKg1xLmG0YMw62ob6EAM4w0US/Qs4b/RkhOc6eZ2KFHOM6JjRgm62OO4sCBA7X+48cSjC96DjF0i/qbOMCYgW1Kk/VhxCLRCz1y4dLBs4CezdKlS1+Whyt7n0PPWmhagBXaoU6ixxhD+AwkYAUBGjErKDKOuAjg5X3o0CEdCrIjhIwYhi/Q0KDnAwG/4K+//nodwkrOiLVq1UqHMkObnSKvmEMDM4beAiwCwCozzFNB7wwauSuNGHpo0EggoIcDZg3zm8Ll58oeMeQBe3whoAFCYxDqkbCaGcwNjBjm3DgdwA7GK3T+ZciIgRkYYCgyFDA0hL9juDiShh1GDLxhKBAwzyhkhtETht42/B0hnOYpzSW0g5cdeoTjfKURw/Dt/v371aSifqMnCyb5+++/l/fff1+Li55F9CpWqVIl4qHJSPTCwdvh0rnzzju1Bx0GPfRM4Dg09BIn9axZacTQS4v3Bk7/YCABKwjQiFlBkXHERcCpoUm8uNE7gl/amOeFRga9J+iBSa6BhVFErwAaBvS0oJHGPJl7771XDRp6xjB5HEMlaATQ4wYj9uyzzyb0kmE4B7056PmDAYPpxN/D5SexEUN8aCAxb+maa65JmItml3G1Yygs0goSziBgjhx6vtDLhfxhaKxXr15qzGCgImnYYcQwvIu5TA0aNNBFE+ghgzHDJPPERiyc5m5sNmyHHpEaMfQyhswOzl3EHEXMvytfvryyu/3223We5bJly7R+RzpZPxK9UNfDpYP6gPlhyAOGRvEjC88HhrSTetasNGKYO1mtWjXtNWUgASsI0IhZQZFxxEUAe4h98cUXtk/Wx6pJzDt58skntQcOE26xMg89ZskZsUuXLqkRQ+8LJhDjPvwqTpcuneYZx5+gV6BSpUo6RyZv3ry6QnPYsGF6UgDm2WC135IlS/Q6mAD8ekfjEC4/V66ahGHEpH0E9MwhP2nSpImLe7ibu3Xrpr/4MQTldEjOIGDFHoavMTEck8WhASbyRzrUBSOGOURY4Yp7MGEcemEBx5VGLDnNnWZihx6RGjGUFQYYPyxCvYX4N5ggLJzAnDGYJSyAQZ220oghvnDp4Bi0Hj166FAo5gXiv//5z3/qD51wz5pVuuG5bdq0Kc/CtQoo4+GqSdYBMwhgvg/mW2EzSQb3CGBbDfT4YdiOerinQyhl6uG+BolzENIDBpGBBKwiwB4xq0gynrgIYEk4VjViDorTARun4pd8UgETll9//XWns+Raephjg3k5MGJu6eFa4Q1M2It6YN879OKFC+jdRa+xF0NID2zjwUACVhGgEbOKJOOJiwAmzGNzRgwTWhkwNOjXSbUYlrF65RaGdzA5HEbMDj2s1DYIcVEPs1QO6YFhbQYSsIoAjZhVJBlP3ASwwSlWBmICMIPzBLCLP4zrkCFDNHHq4bwGiVOkHu7yvzL1K/UwK3fMjZcJ0Ih5WT2f5R2TsDGZGsfTMDhPAENG2Mg0dCYn9XBeg8QpUg93+V+Z+pV6mJU75sbLBGjEvKyeD/OO3b6xMhHDYwzOEQjtx4WJ+okD9XBOg8QpUQ93uIdLNZweZuWSufEqARoxryrn43xjn54mTZpctWu2j4vsatGwfQjODcQv/qQC9XBWHurhLO+UUktJj5Tu599JICUCNGIpEeLfXSGAg51hDLDhKYN9BLCJKTY2xV5oyQXqYZ8GiWOmHs5wjjSVSPWIND5eRwJJEaARY70wlgCWwGPyPo5OYbCeAA4tx3FJOAg7kkA9IqEU+zXUI3Z2dtwZrR525IFxBoMAjVgwdPZsKXHeIY4SwoavDNYRwIaUOJIGu/9HE6hHNLQiv5Z6RM7KiStj1cOJvDEN/xGgEfOfpr4rEbZTyJ07t7Rr1853ZXOjQDi7EkfBYHuKWAL1iIVa+Huoh7U8440tXj3iTZ/3B48AjVjwNPdkiXFQM1bw9evXT89uZIieAM5XxNYgMLQ49DyeQD3iofe/e6lH/AytjMFKPazMF+PyPwEaMf9r7JsS7t+/X40EDtfGflc47JchZQLYJf/jjz+WVatWqZHNmTNnyjdFcAX1iABSEpdQj9i42XWXXXrYlV/G6z8CNGL+09T3Jfrss8/0bMjOnTtLy5YtfV/eeAqIDXJHjx4tOJqlUaNG8UQV9l7qETlW6hE5KyeudEIPJ8rBNLxNgEbM2/oFOvcjR46UDRs2SLVq1aR58+aBZnFl4XFU0ZIlS6RUqVLy2GOPOcKGeoTHTD0cqYIRJ+KGHhFnjhcGjgCNWOAk91eBDx06JJMmTZJp06YJdoW///77JUeOHP4qZISlAYspU6YIDgNv1qyZPPjgg5I1a9YI77bmMurxF0fqYU2dsioWE/SwqiyMx18EaMT8pWdgS4N5Hp988oksWrRIsmTJIvXq1ZM6deoEgse8efNk7ty5cuLECalRo4YO115zzTWulp16UA9XK2CixE18Pkxhw3yYQYBGzAwdmAsLCWBS+pw5cwQbMtauXVsn91etWlXSpUtnYSruRXX27FlZvny5rFy5UtDIoIwwnuXKlXMvU8mkTD3MkoV6mKUHc0MCNGKsA74lcOHCBVm4cKGaFnxKly6tu/Rj+4uiRYt6qtwbN27U+XBLly7VbQ9QDphL9IClTp3aE2WhHmbJRD3M0oO5CS4BGrHgah+4kqMnAAf44nv79u1qzCpXrix58+aVggULWratQ7xgDxw4INu2bZPff/9de71WrFghv/32m7Ro0ULnfd1+++3xJmHE/V7VY+3atXLLLbdIhQoVpGzZsr7SA6sIMZG9QIEC+mx44fnwqx5GPKTMhCMEaMQcwcxETCOA4T28wLds2aLfMD7nzp1TQ1akSBHJnj275MmTRz8watddd52lRTh58qTs3r1b9u7dqx/sdL9582bNx7XXXqv5gFEsVKiQlClTRocgsQkrjl5p0KCBpXkxITKv6eGXYe7E2s+aNSuhjmF+pZeeDz/qYcJzyTw4Q4BGzBnOTMUDBI4dO6ZGaOfOnWqS9uzZI/v27ZOjR4/KkSNHdBFA5syZ9TtXrly6oWzatGn1g4YAn0uXLsn58+fV1OEbH0xcP3jwoCD+48eP6zdWM2bLli3B7N14442CDwwY0kgqJG4o/WjGriyz6Xp4oEpHnMVI6hb1iBgnLySBqAjQiEWFixcHlQCMFUxUyEhhheKpU6euMl3gk9ic4b8zZsyoPWqJjRz+PZYQSYMZS7xeuycSPbCNB8IDDzyQYJat1sNr3Owy+JHogR8ldj8fftCDZQgeARqx4GnOEnucAM1YZALiOCyE0HdkdwXrKtalYOnN0ppJgEbMTF2YKxJIlgAb0JQrCI1Y8oxYh1KuQ7yCBJwgQCPmBGWmQQI2EGBDmjxUGrHwfFh3bHggGSUJxEiARixGcLyNBEwgwAY1vAo0YkmzYZ0x4cllHkjgLwI0YqwNJOBxAmxYkxaQRuxqLqwrHn/YmX1fEqAR86WsLFTQCLCBvVpxGrHLmbCOBO2twPJ6hQCNmFeUYj5JIAUCbGgvB0Qj9hcP1g2+PkjAXAI0YuZqw5yRQNQE2OD+hYxG7H8sWCeifox4Awk4SoBGzFHcTIwE7CfAhvd/jGnEaMLsf9qYAgnET4BGLH6GjIEEjCNAM0Yjxjpg3GPJDJFAkgRoxFgxSMCnBILeEAe5Ryzo2vv0kWaxfEqARsynwrJYJAACQW6Qg2rEgqw5n3oS8CIBGjEvqsY8k0AUBILaMAfRiAVV6ygeB15KAsYRoBEzThJmiASsJxDEBjpoRiyIGlv/pDBGEnCeAI2Y88yZIgm4QiBoDXWQjFjQtHXlAWKiJGATARoxm8AyWhIwkUCQGuygGLEgaWriM8U8kUC8BGjE4iXI+0nAYwSC0nAHwYgFRUuPPWLMLglERYBGLCpcvJgE/EEgCA24341YEDT0x9PGUpBA8gRoxFhDSCCgBPzekPvZiPldu4A+kix2QAnQiAVUeBabBEDAzw26X42YnzXjU0kCQSRAIxZE1VlmEkhEwK8Nux+NmF+14gNJAkEmQCMWZPVZdhL4/wT82MD7zYj5USM+gCRAAiI0YqwFJEACSsBvDb2fjJjftOEjRwIk8BcBGjHWBhIggQQCfmrw/WLE/KQJHzUSIIGrCdCIsVaQAAlcRsAvDb8fjJhftOAjRgIkEJ4AjRhrBwmQwFUE/GAAvG7E/KABHy0SIIGUCdCIpcyIV5BAIAl43Qh42Yh5nX0gHxgWmgRiJEAjFiM43kYCQSDgZUPgVSPmZeZBeCZYRhKwmgCNmNVEGR8J+IyAV42BF42YV1n7rMqzOCTgKAEaMUdxMzES8CYBLxoErxkxLzL2Zm1mrknALAI0YmbpwdyQgLEEvGYUvGTEvMbW2ErKjJGABwnQiHlQNGaZBNwi4CXD4BUj5iWmbtU7pksCfiZAI+ZndVk2ErCBgFeMgxeMmFdY2lCNGCUJkMD/J0AjxqpAAiQQNQEvGAjTjZgXGEZdMXgDCZBA1ARoxKJGxhtIgARAwHQjYbIRM50dazgJkIBzBGjEnGPNlEjAdwRMNhSmGjGTmfmugrJAJOABAjRiHhCJWSQBkwmYaixMNGKmsjK5fjFvJOB3AjRifleY5SMBBwiYaDBMM2ImMnKgajAJEiCBFAjQiLGKkAAJWELANKNhkhEzjY0lgjMSEiABSwjQiFmCkZGQAAmAgEmGwxQjZhIT1lISIAHzCNCImacJc0QCniZgivEwwYiZwsLTFYqZJwGfE6AR87nALB4JuEHABAPithEzgYEb2jNNEiCB6AjQiEXHi1eTAAlESMBtI+KmEXO77BFKxMtIgAQMIEAjZoAIzAIJ+JWAm4bELSPmZpn9Wo9YLhLwMwEaMT+ry7KRgAEE3DImbhgxt8pqgMzMAgmQQIwEaMRiBMfbSIAEIifghkFx2oi5UcbIFeCVJEACphKgETNVGeaLBHxGwGmj4qQRc7psPqsaLA4JBJoAjVig5WfhScBZAk4aFqeMmJNlclYtpkYCJOAEARoxJygzDRIggQQCThkXJ4yYU2Vh9SEBEvAvARox/2rLkpFAzARSpUoV87280R4Cly5dsidixkoCJOAqARoxV/EzcRIwkwCMGBt+c7ShHuZowZyQgNUEaMSsJsr4SMAHBNjwmyUi9TBLD+aGBKwkQCNmJU3GRQI+IcCG3ywhqYdZejA3JGAlARoxK2kyLhLwCQE2/GYJST3M0oO5IQErCdCIWUmTcZGATwiw4TdLSOphlh7MDQlYSYBGzEqajIsEfEKADb9ZQlIPs/RgbkjASgI0YlbSZFwk4BMCbPjNEpJ6mKUHc0MCVhKgEbOSJuMiAZ8QYMNvlpDUwyw9mBsSsJIAjZiVNBkXCfiEABt+s4SkHmbpwdyQgJUEaMSspMm4SMAnBNjwmyUk9TBLD+aGBKwkQCNmJU3GRQI+IcCG3ywhqYdZejA3JGAlARoxK2kyLhLwCQE2/GYJST3M0oO5IQErCdCIWUmTcZGATwiw4TdLSOphlh7MDQlYSYBGzEqajIsEfEKADb9ZQlIPs/RgbkjASgI0YlbSZFwk4BMCbPjNEpJ6mKUHc0MCVhKgEbOSJuMiAZ8QYMNvlpDUwyw9mBsSsJIAjZiVNBkXCfiEABt+s4SkHmbpwdyQgJUEaMSspMm4SMAnBNjwmyUk9TBLD+aGBKwkQCNmJU3GRQI+IcCG3ywhqYdZejA3JGAlARoxK2kyLhLwCQEvNPw///yzfPTRRzJ48OCoqH/22Wcyfvx4mTx5stSvX18ef/xxadCgQVRxOH2xF/RwmgnTIwG/EKAR84uSLAcJWEjACw3/smXL5IUXXpCFCxdGVfLERuyHH36QG2+8Ua6//vqo4nD6Yi/o4TQTpkcCfiFAI+YXJVkOErCQgBsN/86dO+XRRx+V1atXS5kyZWTQoEFSoUIF2bNnj7Rr105Wrlwp2bNnl6FDh8pdd92lf9u/f7/cd999MmHCBEmbNq2cOXNGUqdOrSQyZMggJ0+elPPnz8uTTz4p06dPlxtuuEF7wX755RftEWvUqJF06dJFe8R++ukn6dy5s6xfv16KFi0q7733ntx2221Jpn///fdbSDvlqNzQI+Vc8QoSIAErCNCIWUGRcZCAzwi40fBXqVJFTVWPHj1kxowZOmQIc/T888/LhQsXZPjw4frvTz31lMC0XdkjFs6Ivfzyy9prhp6ww4cPq4mrXLnyZUasXr16Urx4cenZs6d07NhRjV3fvn1ly5Ytml5S6TspuRt6OFk+pkUCQSZAIxZk9Vl2EghDwOmGHz1U6H3au3ev9mQhoFcKvV+rVq2SFStWyFtvvSVFihRJyHGkRqxs2bLy9ttvS40aNfTeV199VTAkmbhHLE+ePNKyZUvZunVrQvwlSpSQMWPGyNy5c5NM38nK47QeTpaNaZFA0AnQiAW9BrD8JJAEAacb/sWLF+uQYcGCBS/LDUzTnXfeKc8995xMnTpVsmbNKs8++6x07do1xR6x9OnTyx9//CEwWTBz+fPn17j/85//6DBlYiOGf4fpW7BgQUL6yM8jjzwiNWvWTAWj5PcAACAASURBVDJ9JyuO03o4WTamRQJBJ0AjFvQawPKTgAFGbOPGjdK4cWPZvHlzQm7WrFkjhQoV0mFImCj0lMGwNWnSRHA9etEST9bH0OSpU6d0rtj27dvl5ptv1iFF9LShRwxDkggwcjt27LiqR6xVq1Y6FBkKpUqVklGjRqn5Syp9zDdzKtCIOUWa6ZCA8wRoxJxnzhRJwHgCTjf8Fy9e1An6mBeGXqg5c+ZI27Zt1YTBIJUsWVJefPFF/X9M0l+3bp3s2rVLTdU333yjPHPkyKHGqXnz5tKrVy8ZMmSIGrFXXnlFDdx///tfOX78uFSrVk3Kly9/1RyxYsWK6Xy09u3by6RJkzQOGLNmzZolmX6BAgUc09FpPRwrGBMiARIQGjFWAhIggasIuNHwb9q0SVctrl27VvLly6eT82vVqqUT9jt06CD4e7Zs2aR379660vHIkSNSsWJFKV26tA5bYk8xmC8YNMwH+/bbb+W3336Tc+fOqcHDRP9cuXJpGkuWLLlq1STSRbxIBz1x7777rpQrVy5s+k5WGzf0cLJ8TIsEgkyARizI6rPsJBCGABt+s6oG9TBLD+aGBKwkQCNmJU3GRQI+IcCG3ywhqYdZejA3JGAlARoxK2kyLhLwCQE2/GYJST3M0oO5IQErCdCIWUmTcZGATwiw4TdLSOphlh7MDQlYSYBGzEqajIsEfEKADb9ZQlIPs/RgbkjASgI0YlbSZFwk4BMCbPjNEpJ6mKUHc0MCVhKgEbOSJuMiAZ8QYMNvlpDUwyw9mBsSsJIAjZiVNBkXCfiEABt+s4SkHmbpwdyQgJUEaMSspMm4SMAnBNjwmyUk9TBLD+aGBKwkQCNmJU3GRQI+IcCG3ywhqYdZejA3JGAlARoxK2kyLhLwCQE2/GYJST3M0oO5IQErCdCIWUmTcZGATwiw4TdLSOphlh7MDQlYSYBGzEqajIsEfEKADb9ZQlIPs/RgbkjASgI0YlbSZFwk4BMCbPjNEpJ6mKUHc0MCVhKgEbOSJuMiAZ8QYMNvlpDUwyw9mBsSsJIAjZiVNBkXCfiEABt+s4SkHmbpwdyQgJUEaMSspMm4SMAnBNjwmyUk9TBLD+aGBKwkQCNmJU3GRQI+IcCG3ywhqYdZejA3JGAlARoxK2kyLhLwCQE2/GYJST3M0oO5IQErCdCIWUmTcZGATwiw4TdLSOphlh7MDQlYSYBGzEqajIsEfEKADb9ZQlIPs/RgbkjASgI0YlbSZFwk4BMCaPgZzCJw6dIlszLE3JAACVhCgEbMEoyMhARIwCQCV/YgsUfJJHWYFxIggcQEaMRYH0iABHxHgEbMd5KyQCTgWwI0Yr6VlgUjgeASoBELrvYsOQl4jQCNmNcUY35JgARSJEAjliIiXkACJGAIARoxQ4RgNkiABKwjQCNmHUvGRAIkYC8BGjF7+TJ2EiABFwjQiLkAnUmSAAnERIBGLCZsvIkESMBkAjRiJqvDvJEACSQmQCPG+kACJOA7AjRivpOUBSIB3xKgEfOttCwYCQSXAI1YcLVnyUnAawRoxLymGPNLAiSQIgEasRQR8QISIAFDCNCIGSIEs0ECJGAdARox61gyJhIgAXsJ0IjZy5exkwAJuECARswF6EySBEggJgI0YjFh400kQAImE6ARM1kd5o0ESCAxARox1gcSIAHfEaAR852kLBAJ+JYAjZhvpWXBSCC4BGjEgqs9S04CXiNAI+Y1xZhfEiCBFAnQiKWIiBeQAAkYQoBGzBAhmA0SIAHrCNCIWceSMZEACdhLgEbMXr6MnQRIwAUCNGIuQGeSJEACMRGgEYsJG28iARIwmQCNmMnqMG8kQAKJCdCIsT6QAAn4jgCNmO8kZYFIwLcEaMR8Ky0LRgLBJUAjFlztWXIS8BoBGjGvKcb8kgAJpEiARixFRLyABEjAEAI0YoYIwWyQAAlYR4BGzDqWjIkESMBeAjRi9vJl7CRAAi4QoBFzATqTJAESiIkAjVhM2HgTCZCAyQRoxExWh3kjARJITIBGjPWBBEjAFwT2798vs2bNkpkzZ8rcuXMlc+bMsmfPHrnhhhvk+PHjUq9ePWnQoIE0bNhQcuXK5YsysxAkQALeJ0Aj5n0NWQISCDSBtWvXyqBBg2TGjBkJRqt48eJqwHLnzi379u1TQ7Z+/foEo9a4cWPp3bu3lC5dOtDsWHgSIAH3CdCIua8Bc0ACJBAjgW7dusmECROkT58+0qNHD8GQZErh0qVLMmTIEBk4cKA89NBDMmLEiJRu4d9JgARIwDYCNGK2oWXEJEACdhFAD9fDDz8sefPmleHDh0vWrFmjTuro0aPSvXt32b17t3z00Ufag8ZAAiRAAk4ToBFzmjjTIwESiIsATNidd96pRqxfv35xxYWbBwwYIOPGjZOlS5fSjMVNkxGQAAlES4BGLFpivJ4ESMBVAnXr1lUjZoUJCxWkf//+asTmzZvnatmYOAmQQPAI0IgFT3OWmAQ8SwBzwk6ePKk9WFaHdu3ayXXXXSfvvPOO1VEzPhIgARIIS4BGjJWDBEjAEwSwOrJ69eqyffv2mOaEpVRIzBkrUKCALFmyhKspU4LFv5MACVhGgEbMMpSMiARIwE4CrVu3lttuu0169uxpWzJYTblmzRqZOHGibWkwYhIgARJITIBGjPWBBEjAeALYrPWWW26REydORLRFxZUFgoEbP3683HrrrcmWFVtbZMqUSX755Rdu+mp8rWAGScAfBGjE/KEjS0ECvibw73//W3fL/+STT2IqZ6RGDJG3bNlS7rnnHunQoUNMafEmEiABEoiGAI1YNLR4LQmQgCsEmjVrJk2aNNENWCMJCxculCeeeEIOHDggzZs3l8WLF6uJS6lHDHFjT7HPPvtMpk6dGklSvIYESIAE4iJAIxYXPt5MAiTgBIHy5cvLyJEjBd8pBUy6xzDm6NGjBUcZYZ+wl19+WX766aeIjNiqVaukS5cugm8GEiABErCbAI2Y3YQZPwmQQNwEsIP+d999J/ny5UsxLvRkvf3227Jo0SK99uzZs5IjRw5ZuXJlREZs165dUqFCBd1xn4EESIAE7CZAI2Y3YcZPAiQQNwGcIXn+/HlJkyZNinFhHzD0Zn344YcJ1xYpUkSmT58ekRG7cOGCpE2bVjBxn4EESIAE7CZAI2Y3YcZPAiQQN4FoesSmTZumPWKYJ4aAocrrr79efvzxx4iMGHvE4paLEZAACURBgEYsCli8lARIwB0C0cwRO3bsmNx8880yduxYadiwoQwaNEhefPFFWbduXURGjHPE3NGYqZJAUAnQiAVVeZabBDxEAKsm77vvPj3oO5Iwf/58efLJJ+XQoUN6344dO2To0KERGTGsmvz8889lypQpkSTFa0iABEggLgI0YnHh480kQAJOEMB8rzlz5sS8j1g0ecQ+YvXq1ZOOHTtGcxuvJQESIIGYCNCIxYSNN5EACThJADvrY7gRB35j4r5dARP0cfD3r7/+yp317YLMeEmABC4jQCPGCkECJOAJAjxr0hMyMZMkQAJREqARixIYLycBEnCHwNq1a6V69eqyfft2yZo1q+WZwOrKAgUKyJIlS6R06dKWx88ISYAESCApAjRirBckQAKeIfD444/rwd/jxo2zPM/t2rXTYUnsQ8ZAAiRAAk4RoBFzijTTIQESsIRA3bp1pVq1atK3b19L4kMkOAbp66+/lnnz5lkWJyMiARIggUgI0IhFQonXkAAJGENgz549cuedd+oB4C+99FLc+erfv78e9L106VK54YYb4o6PEZAACZBANARoxKKhxWtJgASMIPDFF19Ihw4dpE6dOjqUGMucMcwJwwKA48eP655hNGFGSMtMkEDgCNCIBU5yFpgEvE0AW0xgp/2uXbvKmjVrZMKECdK7d2/p2bNnRFtb4P4hQ4bojvuVKlWSgwcP6tmUdm6L4W3izD0JkICdBGjE7KTLuEmABCwn0KVLFz2Qe9SoURo3VlMOHDhQZs6cKQ0aNNBPiRIltIcrd+7csm/fPsFw5vr16/WaWbNmSePGjdW8YXVk586d1YSNHDnS8rwyQhIgARJIiQCNWEqE+HcSIAFjCIwZM0aHIlevXn1VDxY2fQ0ZLRxpBPO1e/duwYHhMGXYmiJk1HLlypVQJpi6cuXKSbdu3aRTp07GlJUZIQESCAYBGrFg6MxSkoDnCaDnC4Zp2bJlUrFiRUvL8+2330rVqlXV4HEPMUvRMjISIIEUCNCIsYqQAAl4gkCVKlWkTZs22nNlR0BPG+abLV++3I7oGScJkAAJJEmARowVgwRIwHgC3bt3l2PHjsnYsWNtzWv79u0lS5YsMnz4cFvTYeQkQAIkECJAI8a6QAIkYDSB8ePH6wpHDBumT5/e1ryeOXNGhz8xkb9t27a2psXISYAESAAEaMRYD0iABIwlsGnTJt2qAisdcc6kEwFnTWJSP7a0KFq0qBNJMg0SIIEAE6ARC7D4LDoJmE6gVq1aaoqeeeYZR7M6dOhQNX8LFixwNF0mRgIkEDwCNGLB05wlJgFPEOjVq5dgG4pJkya5kt9WrVpJ/vz5ZfDgwa6kz0RJgASCQYBGLBg6s5Qk4CkCOHIIRgzzwmI5vsiKwuIIJMwXgxFr3ry5FVEyDhIgARK4igCNGCsFCZCAUQTQCwYDNHHiRKlbt66reZs3b56eRwlDiN4xBhIgARKwmgCNmNVEGR8JkEBcBOrXry/VqlWTPn36xBWPVTfj+KSvv/5aZs+ebVWUjIcESIAEEgjQiLEykAAJGEOgb9++sm7dOpk+fboxeUJGmjZtKqVKlZIBAwYYlS9mhgRIwPsEaMS8ryFLQAK+IIBzInEAN4YB8+TJY1SZ9u7dq8OlOGi8YcOGRuWNmSEBEvA2ARoxb+vH3JOALwjs27dPjc57770njRo1MrJMM2bMkK5du6pRzJ07t5F5ZKZIgAS8R4BGzHuaMcck4DsCXhn6M3Xo1HcVggUigQARoBELkNgsKgmYSMBrk+FNW0xgoqbMEwmQQOQEaMQiZ8UrSYAELCbgxe0hTNpew2I5GB0JkIALBGjEXIDOJEmABES8vGGqCRvOsg6RAAn4gwCNmD90ZClIwHMEvH6EkNtHMHlOcGaYBEggSQI0YqwYJEACjhMYNmyYYBXiwoULHU/bygRr1qypqzyffvppK6NlXCRAAgEiQCMWILFZVBIwgQB2qceEd2wDUbRoUROyFHMeNm3apNtuYNd9nAbAQAIkQALREqARi5YYrycBEoiZwJkzZ9S49O7dW9q2bRtzPCbdOH78eBk0aJAay/Tp05uUNeaFBEjAAwRoxDwgErNIAn4h0L59e8mSJYsMHz7cL0XScnTv3l2OHTsmY8eO9VW5WBgSIAH7CdCI2c+YKZAACfwfgXfeeUcmTJggy5cv9yWPKlWqSJs2baRbt26+LB8LRQIkYA8BGjF7uDJWEiCBRAS+/fZbqVq1qg7flS5d2pds1q5dq8Ouy5Ytk4oVK/qyjCwUCZCA9QRoxKxnyhhJgAQSEbh06ZIaFPQUderUyddsxowZoz1/MJypUqXydVlZOBIgAWsI0IhZw5GxkAAJhCHQpUsXgRkbNWpUIBh17txZTdjIkSMDUV4WkgRIID4CNGLx8ePdJEACyRAIYg9RkHoAWflJgATiJ0AjFj9DxkACJJAEgSDPmQrCnDhWehIgAWsI0IhZw5GxkAAJXEEg6KsI/b5KlBWeBEjAGgI0YtZwZCwkQAKJCHBfrf/B8Ou+aazsJEAC1hGgEbOOJWMiARL4PwLcaf6vauDHkwRYyUmABKwlQCNmLU/GRgKBJsCzF6+W309nawa6crPwJGATARoxm8AyWhIIIoFatWpJgwYN5Jlnngli8cOWeejQoTJr1ixZsGABuZAACZDAZQRoxFghSIAELCHQq1cv2bFjh0yaNMmS+PwWSatWrSR//vwyePBgvxWN5SEBEoiDAI1YHPB4KwmQwP8ITJkyRWDEsKN81qxZiSUJAkePHtUTBmDEmjdvTkYkQAIkoARoxFgRSIAEwhL4888/5cCBA5InT56w16AXDAZj4sSJUrduXdJMhsC8efOkdevWaljROxYu7Nu3T3LmzCnXXHMNeZIACficAI2YzwVm8UggVgLYIX7nzp3Sv39/wQ754UL9+vWlWrVq0qdPn1iTCtR9AwcOFEzgnz17dthyd+3aVZ5//nnJly8fz6wMVO1gYYNIgEYsiKqzzCQQAYHjx4/L22+/LU2aNJFbb701yTv69u0r69atk+nTp0cQIy8JEWjatKmUKlVKBgwYkCSUjRs36ly7Hj16SMaMGQmOBEjAxwRoxHwsLotGArESuHjxomzbtk3ef/99ee2115KMZsaMGYKem1WrViU7dBlrHvx83969e6V8+fLy3nvvSaNGjZIsas+ePeWRRx6RQoUKcYjSz5WBZQs8ARqxwFcBAiCBqwmcPHlShyMrVaoklStXvuoCzGHCvLDkjAS5Jk8gZGQxXyx37txXXYzzKpcsWSLdunWTDBkyECcJkIBPCdCI+VRYFosE4iFw+PBhXQU5YsQIufbaa6+KKqWhtXjSDtK9yQ3tnj9/Xh599FF56623JHPmzEHCwrKSQKAI0IgFSm4WlgQiI3Dw4EF5/PHHk9wTLJLJ5pGlwqtAILnFDlhhOXLkSMmSJQthkQAJ+JQAjZhPhWWxSCBWAtiyYsOGDfLBBx/I8OHDL4sm0u0XYk07iPclt/3HU089JZ06dZLixYtL6tSpg4iHZSYB3xOgEfO9xCwgCURH4MKFC/L999/rJP3Jkycn3JzShqTY7gKT/GkYkuYNgxuOTbgNcbHxKybtYz4euUZXj3k1CXiFAI2YV5RiPknAQQK7d+/WbStWrlyZsI9Vckf0wIT9/vvv8uKLL+qWF5kyZXIwt+YnderUKV0B+frrr8sNN9yQ5N5gVx4RBaZlypQR9EImNZnf/FIzhyRAApEQoBGLhBKvIYGAEdi/f780a9ZM+vXrJ3Xq1JHkDq0Obfz69NNPS5cuXfR6hqsJzJ8/X4d6R40apdt9pEqV6qqLEh+a/tVXX+kmuXPnzpVs2bIRKQmQgE8J0Ij5VFgWiwTiIXD69GkZP368zhN79dVXBasksc1C0aJFL4sWw23YE6t79+40YREAnzNnjowePVreffddyZEjx1XDjZs2bdJhSGyQ++yzz0rnzp2lY8eOkj59+ghi5yUkQAJeJEAj5kXVmGcScIAA5oRhsvjMmTN1SO2hhx5KSBVzwbDzPuY2bd++XR5++GEpVqyYA7nyfhLYNX/s2LF61iRWRV533XW6YSt6yNC7+PHHH6sJu/vuu3XFJId5va85S0ACyRGgEWP9IAESSJIATEHLli114n6uXLmkRYsWUrBgQdm6daseawQzhp31k9rwlUhTJrBixQrdpy1NmjQ6Fww76OM0AxxthIPWsfM+/jupIcyUY+cVJEACXiFAI+YVpZhPEnCYwDvvvCMTJkzQ3d03b94s3333nRw5ckTPnSxZsqROOmeIn8CePXvU2P7888+SPXt2NWDoXcRB6m3atNGd9RlIgAT8S4BGzL/asmQkEDMBHK9TtWpVnRdWunTpmOPhjbETWLt2rc4XW7ZsmVSsWDH2iHgnCZCA0QRoxIyWh5kjAecJYEgSBgA9MdhMlME9AjjvEz2TMMQconRPB6ZMAnYSoBGzky7jJgEPEsBKPQRss8DgPgHq4b4GzAEJ2EmARsxOuoybBDxGgD0w5gnGHkrzNGGOSMBKAjRiVtJkXCTgYQKck2SueJyzZ642zBkJxEuARixegryfBHxCoEqVKlylZ7CWoVWsy5cvNziXzBoJkEC0BGjEoiXG60nAhwSwM/6xY8d0o1EGcwm0b99esmTJokclMZAACfiDAI2YP3RkKUggZgI4ymjQoEG6Mo9H6cSM0ZEbz5w5oytae/fuLW3btnUkTSZCAiRgLwEaMXv5MnYSMJpA6GzD2bNn6waiDOYT+Prrr6V+/fpJnv1pfu6ZQxIggSsJ0IixTpBAgAnUqlVLGjRoIM8880yAKXiv6EOHDpVZs2bJggULvJd55pgESOAyAjRirBAkEFACvXr1kh07duh5hgzeI9CqVSs9OHzw4MHeyzxzTAIkkECARoyVgQQCSGDKlCkCI4Z5YVmzZg0gAe8X+ejRozpfDEasefPm3i8QS0ACASVAIxZQ4Vns4BJALxga8IkTJ0rdunWDC8IHJZ83b560bt1aDTV6xxhIgAS8R4BGzHuaMcckEBcBTPTGxPw+ffrEFQ9vNoPAwIEDBRP4seCCgQRIwHsEaMS8pxlzTAIxE+jbt6+sW7dOpk+fHnMcvNE8Ak2bNpVSpUrJgAEDzMscc0QCJJAsARoxVhASCAiBGTNmSNeuXXUYK3fu3AEpdTCKuW/fPh1ufu+996RRo0bBKDRLSQI+IUAj5hMhWQwSSI7A3r17pXz58myofVxNQkZ71apVkidPHh+XlEUjAX8RoBHzl54sDQkkSYBDV8GoGBx6DobOLKW/CNCI+UtPloYEriLAydzBqhRcjBEsvVla7xOgEfO+hiwBCYQlwO0Nglc5uD1J8DRnib1NgEbM2/ox9yQQlgA3/Axu5eCGvcHVniX3HgEaMe9pxhyTQEQEeARORJh8exGPsPKttCyYzwjQiPlMUBaHBECAh0KzHoAAD3VnPSAB8wnQiJmvEXNIAlERwC7rmLCN/cKKFi0a1b282F8ENm3apPuLYdd9nKbAQAIkYB4BGjHzNGGOSCBmAmfOnNGGt3fv3tK2bduY4+GN/iEwfvx4GTRokBrz9OnT+6dgLAkJ+IQAjZhPhGQxSAAE2rdvL1myZJHhw4cTCAkkEOjevbscO3ZMxo4dSyokQAKGEaARM0wQZocEYiXwzjvvyIQJE2T58uWxRsH7fEygSpUq0qZNG+nWrZuPS8mikYD3CNCIeU8z5pgEriLw7bffStWqVXX4qXTp0iREAlcRWLt2rQ5bL1u2TCpWrEhCJEAChhCgETNECGaDBGIlcOnSJW1g0dPRqVOnWKPhfQEgMGbMGEHPKQx7qlSpAlBiFpEEzCdAI2a+RswhCSRLoHPnztqojhw5kqRIIEUCXbp0EZj3UaNGpXgtLyABErCfAI2Y/YyZAgnYRoA9HLah9W3E7EH1rbQsmEcJ0Ih5VDhmmwQ454d1IFYCnFMYKzneRwLWE6ARs54pYyQBRwhwFZwjmH2bCFfZ+lZaFsxjBGjEPCYYs0sCIMB9oVgPrCDAfeesoMg4SCA+AjRi8fHj3STgOAHulO44ct8myJMYfCstC+YhAjRiHhKLWSUBnh3IOmA1AZ5NajVRxkcC0RGgEYuOF68mAVcJ1KxZUxo1aiRPP/20q/lg4v4iMGzYMJkxY4YsXLjQXwVjaUjAAwRoxDwgErNIAiDQq1cv2bFjh0yaNIlASMByAq1atZL8+fPL4MGDLY+bEZIACYQnQCPG2kECHiAwZcoUNWLYET1r1qweyDGz6DUCR48e1RMaYMSaN2/utewzvyTgWQI0Yp6VjhkPCgH0gqGBnDhxotStWzcoxWY5XSAwb948ad26tRp+9I4xkAAJ2E+ARsx+xkyBBOIiUL9+falWrZr06dMnrnh4MwlEQmDgwIGCCfyzZ8+O5HJeQwIkECcBGrE4AfJ2ErCTQN++fWXdunUyffp0O5Nh3CRwGYGmTZtKqVKlZMCAASRDAiRgMwEasUSAT58+LcePH9fPsWPH5MSJE4J/O3funFy4cEHOnz+v3whp0qSRtGnT6ne6dOkkQ4YMkilTJsmSJYtkzpxZv9OnT2+zfIzezwSwiq1r1646TJQ7d24/F5VlM4zAvn37dDj8vffe01W6DCRAAvYRCJwRO3z4sGzbtk127twpu3fvlj179gheOpio+scff1xmpHLmzCmpUqVSwxUyXfhGCJkyfOODg3QPHDigBi5k5DJmzKgTq/PkyaOfG2+8UT8FCxaUbNmy2acqY/Y8gb1792pDOGrUKGnYsKHny8MCeI/AzJkzpXPnzvpDAO8vBhIgAXsI+NqInTp1SnAw8pYtW/QbBgwBRqhw4cKSI0eOBJOUN29e7dWyMiB9GD00qvgcOnRI84J8wOAhH+j+R17KlCljefpWloVxOUuAQ0PO8mZqSRPg0DhrRmICHDWypz74zoitXLlS1qxZo7/i0ONVunRpqVSpkuTLl0+NT/bs2e0hGWWsoZ65Xbt2yYoVK9QooresQoUKUrZsWf0OUoAxZTCLAHp5GcwgwOfDDB0S58KvzwdHjZyva543YmfPntXdoJcvX66f8uXLS5UqVaREiRJSqFAh54nGkSJ6yzZs2CBLly5VM4lyVK1aVWrUqKHz0Pwc0ND49cXmRd2oh1mqUQ/qYQcBjhrZQTX6OD1rxNDzNWfOHPnmm2+kdu3a2usF05I6deroKRh4BxYFwFiinNjbB9sX1KtXTypWrGhgbuPPEhua+BlaGQP1sJJm/HFRj/gZWhmDl/XgqJGVNcGauDxlxLB68ZNPPpFFixYJJtLDmODsvSCEBQsWyNy5cwXdxnfddZe0bNlSFxD4JXj5xeYXDRKXg3qYpSr1oB6xEuCoUazknLvPE0Zs//79er4eVvHgPLRmzZrp6sYghiNHjsjUqVPl008/1WXlDz74oC468HpgQ2OWgtSDephFwKzceOH54KiRWXUmudwYbcQuXryo+9hs3bpVqlevLlhJxvAXgWnTpsnixYulWLFiut+Ul4MXXmxe5htt3qlHtMTsvZ562Ms32thN1YOjRt4cNTLWiGEn8REjRqjB4AG0yb8m0DsGw9q9e3dp0qRJtO8UI6439cVmBBwXMkE9XICeTJLUg3okR4CjRn/R8eKokXFGDPtuvfTSSzo5vW3btmY9fYbn5qOPPtLFC/369fPcBoxsaMyqXNSDephFwKzcmPJ8cNQo15uGkAAAIABJREFU+XrhlVEjo4wYesEmT56sRqJo0aJmPXkeyc3GjRvVyLZu3Vruu+8+j+RadINbbl9hjlzUwxwtkBPqQT2uJMBRo8jrhOmjRsYYsUGDBumGpg899FDkdHllWALjxo3To5t69uzpCUpsaMySiXpQD7MImJUbN58PjhrFXhdMHTUywoh169ZNe2/uvvvu2AnzzqsIzJ49W7e8ePPNN42n4+aLzXg4LmSQergAPZkkqQf1AAGOGsVfD0wcNXLdiD322GPyyCOP+Haj0virTXwxYFPYjz/+WCfzmxzY0JilDvWgHmYRMCs3bjwfHDWytg6YNGrkqhFr37699O/fX/Lnz28tYcZ2GYFffvlFXn31VRkzZoyxZNx4sRkLw4CMUQ8DREiUBeoRbD04amSP/qaMGrlmxPr27SsPPPCAlCxZ0h7CjPUyAjhUHN3aWAhhYmBDY5Yq1IN6mEXArNw4+Xxw1Mhe7U0YNXLFiGGo7Pz589KxY0d7CTP2ywh88MEHkjFjRt2N37Tg5IvNtLKbmB/qYZYq1COYenDUyBnd3R41ctyIbdiwQbeoQI8Yg/ME0CPWpk0bKVKkiPOJJ5MiGxqj5OB2CWbJQT0CqAdHjZwV3c1RI8eN2NNPP61bVNx2223OUmZqSmDVqlV6cPprr71mFBEaMaPkYMNvlhzUI2B6cNTIHcHdGjVy1Ij98MMPMmHCBONMQHKSZ8iQQQ4ePKhDetGG4cOHy/bt2+WNN96I9lZbr4cZ7tChg5QqVcrWdKKJnEYsGlr2X0s97GccTQrUIxpa9l9rpx4cNbJfv+RScGPUyFEj9vLLL0vVqlWlVq1a7pKOIvWFCxfqgeOpU6eO4q7/XWqqEZs3b55899130qdPn6jLZNcNdr7Y7Mqzn+OlHmapSz2CowdHjdzV2o1RI0eN2D333COfffaZXHvtte6SviL1d955RzA+vGbNGtmxY4dUrlxZ8G/Y6T9Tpkyyd+9e3XAWZ19i8iTCv/71L73nP//5jyxevFgP3MZO9jBt2LMre/bsxhqxU6dOSYsWLWTWrFnG6MCGxhgpNCPUg3qYRcCs3Nj1fHhx1CglZTAKNmfOHN3P0ivB6VEjx4zYjz/+qA2/Sb0woUoB0wUj9e2330qJEiXk/vvvl3Llygl68EJGbOzYsYLesSlTpuhtd9xxh/Tu3Vt7+AoVKiQzZszQf3vuuedk06ZN8vnnnxtrxJD/V155Rc2lKcOTdr3YknrwCxcurC+GggULXvXnbNmy6XDyyJEjdUg61rl0P//8s+A4jcGDB0f17sH18aQbVWLJXOykHlbl2c/xeFUPzAUeP3683HrrrZbKg/frP//5TxkxYoTce++9lsYdSWR26eHFUaOUeEVqxM6ePWtMJ43To0aOGbGvvvpKVqxYIS+88EJKujn+dxgxVBbsJ4Lw7rvvCsbp33777QQjdvToUTVpBw4ckMOHD+uLBWd+4SUzadIk+fLLL/XeXbt2yd///nfB9f/+97+NnCOGfJr2wNv1YovViEG/c+fOCUxbLGHZsmVa12HeIw14EaH3NZ50I00rpeuc1COlvPDv5vRQom6mS5cuYknsMmJNmjSRhx9+WH80uxHsej7cGjVKblTop59+ks6dO8v69eulaNGiOuIDXfFjEwvvMPqD0aRixYrJSy+9pDsi/Pbbb/L4449rZwXaVnRgYHoP3odYsT969GhtQzF9B+0o0ihQoIAaa7S7mFcNxs2bN9fRJ/y3k8HpUSPHjBhOP4eB6dKli5M8I0oLlXDdunXaC4IwatQorRiJjRgm61esWFEGDhwov/76q5pK7FSPkwFQefLkyXNZWjBmKLOJk/VDZcQDhCFKE4LVL7aLFy/q5rUffvihFg/DyjhdAC8DmCtskogVMsePH5dHH31UBgwYoA97qEcMLwqYIvSIwZRhSHrp0qVy5513yh9//KE9n7Vr15YFCxYIurG3bdsmuXPnlqFDh+o1FSpUkP3792uvI15E4V5mV76Ibr755oR0jxw5Il27dpX58+drvvCSC+0Bh7qK8pw4cUJq1KihQ+R/+9vfLJPSaj0sy1hAI7JbDzwvGK1Azz+mZJQvX15y5sypP9iaNm2qvU5oHFEH8R5Ew4x5pmnSpBHs+h7aKBoN7RNPPKE/WNGIYtoGVmkXL1487POI5+of//iHvlfRmKMnGdeHC3jG8N7FM4F3NdLD5uDvv/++pE2bVvPz/PPP21pT7NDDzVGjcKNC0BVa9OzZU/f9xLsMRmvLli2yefNm3ZAdG4XXq1dP34c7d+4UlAMdEpjig3qAv+P9O3XqVGnUqJHgqCa0jWhz33rrLdUS12BaD3qi8M5DvcmSJYs0bNhQ36F4xzodnBw1ctSIHTp0SCGbFlAJ0VCGzmMMZ8RQgdC4ogI+9dRTUqdOHTVv33//vb4EEC5cuKBDnFWqVDF6aPL1119Xk3LDDTfoyxQfmJTQfyf1/3ZeAzNx6dIly6oGzhFDw4FDz1Gu+vXrq/mC6YIRQ7kxnIw6icUjMFwwpUkZsU6dOulLYciQIfoigilDDy9ePDBOeDHhlyF6RvHw4lDZxD1iqBPhXmbofU38Iho2bFiCEcPKVgTUMfTQIj3ECwONdFevXi358uUT/IpGnlA2q4IdDY1VeQtiPHbrgfk7eO/hyBf8eMSUC0zXCBkx9HCgVwP1DvUShgc/IjCn9vbbbxdsiJk+fXq55ZZbtLejcePG+uMG9+PdignQ4Z5HNOZo6Fu1aiW9evXSxhsjDckFNOj4Ud+gQQN9nvFDGM8zfuzjecaPYzTidgU79HBz1CjcqBDeKy1btpStW7cmoMTIEDohMmfOrG3g7t279UcsjDx6kt588029FiNDX3/9tf6AheFauXJlQhuZK1cubScxXQnm/b///a/+Db2cMOOhKUwTJ07UH7eoP04HJ0eNHDNiblaylASM1IihMUSjh4AXDxp4/ALAr0csQsALCeKhsURPiamrJpH/F198UXLkyKFzxGAU8Pnzzz8T/jvcv9l1DX4BWWnE8KLGCwS/xBDwCwwvDxgzvLjxYoA5Q4D5gZnGyz8pI4Z5gvi1fv311+v16DGA0YMxwi+/vHnzypkzZ/QXX48ePbSrPbERg2EK9zLDyyjxiwgvnVBPHF50GA5AegjoNbjpppvkySefVAMGE4ehGTSAVgc7Ghqr8xik+OzWA6YFjS56sRCw6TNMVciI3XXXXTonCwFzGK+77jo1Y1iwhB9RqMehUYRFixbpdRhqxzsGDTB6kMM9j7gfvWwwY6FnLCVtrzRiVz7PyBd69+wK0MPq4+Iw1FetWjV9vp0O4UaF0N7hnYT2LBTw3nzkkUfUMKG+oF1EQJuCd1GoNxKmHXUBRgztI97BoVC2bFldEAeDhY4N/DdCzZo19V2Ld24o4F2HOb1OB/wwcWrUyDEjhtUgX3zxhbGT9SPpEUNFQOWrW7euDluGwsyZM/UlggYYpgy/CHGQuclGLPSCNeWsT6sbGgwN4gWC7m4ENAZ4eaA7HEYMLwb8skPArzG8CNAtfqURwzwvDNFgbkwooNFA7yiMGHoVMYcBjRLmT2Ce4ZVGDL/6wr3Mfv/998teRCEjhiEgGDEY4tD8CEzkx/Woe9OmTdN0UR4MC+DfYNKsClbrYVW+ghqP3Xpgzg+MPRYcIeB9htXtofcEhsRD0xgwJIn5P+i5wg85NLSo9/ixjYY1NB0A8WA+EIadYPLCPY+ow5hLhMYe8aHnGcYvuXClEQv3PNtVX+wyYuiJDBleu/KeVLzhOiOgG3oqMRQZCtAIJgWjBJEaMbyfMJ0HAT/m0YOJuoJ3L3rbQu0p0kJvamgKBkYs8MPU6sUekbDF84AfBhj2tjs4ZsRQEDhpNCDYJJXBPQInT57UhwsG0pRgdUODFzXKiF/2COitwssDc/dgxPDgh3o3YZjxQwENyJVGDI0C5l7BAOHXPQK63HEtjBxWXqLHC0OP6B2FSUuqRyzcywyNWuIXUeIeMfwqxDAnfhEiYC4MhlTRM4ZGEOVA7wSGyWHaQr8qrdDUaj2syFOQ47BbD5h5DN03a9ZMMWOoHZOnQ0YMPcuhv+EHB4xTu3bt9EcCngH8yEaPDp6r0AIVzK1EQ4Y5Q+gRS+p5xFAo/o7RBPQq4xnFNA/ElVy40ohd+TyjkbdzuwQ79HBz1CicEcNwMjof0MsFU4bpFxg+hjHDeytSI4b6g5WuGErGD0oYZxgzvHsTv//Qa4Z52KgX6F1DnYE5deNIRAyto4cSvXR2B0eNGObPYAIfxpUZ3COA4TkMxeFlakqw+sUGo4SXM3q5rrnmmoR5VJijCAOD4b7QnBI8aPj1g8YoqaFJ/DpDbxN6wfAiwksF8WJyPh5UTNTHr8NnnnlGX/74FYehyWeffVa++eYb7dUK9zLD/K9wRgwNHXraMHcRW6JgCAdd/Wiw8KsR3fVoFDGRFXMzEvdExKur1XrEm5+g32+3HjA/mP+IBhDzvjDHFb1eSRkxmCs0mJiLhR84aIwxFIgfKBiOwpAghjrxvGC4Cj1eGLpM6nnEpH88c7gH5goT+9ELjeGpaIwYpgfghyUWuOB5xpxPO1dU2qGHm6NGyU3PgbaYj4d3ELZqwrsS2zvBLEdqxDDXCwuLcA9GYbCjAIa+rzRimJ4CIwZDfvr0aZ2oj/SiWalr1bvCyVEjR40YfvlgRQx+9TO4RwBd3ximM2VYEiSsfrFhFRgaAczlQoCZwgOOBQcwYnhJozE5f/68zsnAUAxCUkYMCzQwiRRLtDE8g2EYvBzwowITmtGAwdghHrzQ0BDgFyR6x0qXLq2NVbiX2ZUvosQ9YqFVxjBfMHqYkxKa84bJrFj1CZNXqVIlfbGhMbIqWK2HVfkKajx264HhIrwX8EygzuKHB4YV0ZOFVZOJe8TwYwPPC+okfhBg5TF+2MFsYYUvngP8GEEjClOHOo0e43DP4+TJk7WXBb276F3DfC/8wInGiLVu3VpXDmNFM8wdnhU7tzywSw+OGpnxhDs9auSoEQNi9BpguAhd0QzOE8BQGF58GHIzKdj1YrOijFjViHmB6CXAECXm0WASfeIJpVakY1IcJuthEien8mK3HjBg6LHACmFMsocRwrAUhoVMD8lt0GxX3u3Sg6NGdikWXbxOjxo5bsTQvYluSkxGZnCeAH6Voncn1o1K7cqxXS82K/KL4UXs2QUThvmN6FlzYt6AFXmPNQ6T9Yi1TF6+z249cDwbfiTjBwYCtqjAnES3ArbXwZB/UgGrLzFMHwp+MmIcNXKrxl2ertOjRo4bMRQXQzkY/8XwGINzBEIrXTAB0rRgd0NjWnlNzw/1MEsh6hFeD6xKxipLbKnhVLBTD44aOaVi0um4MWrkihFD8bEiAcdUYD4Cg/0EMBEUk9PRI2ZisPPFZmJ5Tc8T9TBLIeoRHD04auSu1m6MGrlmxIAaRyag0Fhpw2AfAazKw5JhTO42NbChMUsZ6kE9zCJgVm7sfj44auSO3m6NGrlqxIAa54Jh8j4mQjNYTwA71mPVHlYimRzsfrGZXHYT80Y9zFKFegRPD44aOau5m6NGrhsxoMakUBwqGzpyxln8/k0N++pgt2oc4WN6YENjlkLUg3qYRcCs3Dj1fHDUyBnd3R41MsKIATW2U8AGmdjEkiF+AtjcE/tQYeKnF4JTLzYvsDAhj9TDBBX+ygP1CK4eHDWyV3sTRo2MMWJAjSMQMDaOzfhC5wDaK4H/YsfOxdgaBIYWu1t7JbChMUsp6kE9zCJgVm6cfj44amSP/qaMGhllxIAau5jDSGC3cOx3ZefuyPZI606s2BkbO17jjDUYWRxU7aXg9IvNS2zcyCv1cIN6+DSpB/XgqJG1dcCkUSPjjFgINQ4FxfEvOK4CG/gxhCeADXJHjx6tR5TgvDYvBjY0ZqlGPaiHWQTMyo1bzwdHjeKvByaOGhlrxEK4cSjyhg0b9MgNHDDK8BcBHFW0ZMkSKVWqlDz22GOeRuPWi83T0GzMPPWwEW4MUVOPGKDZeIubenDUKDZhTR41Mt6IATkOkJ00aZJMmzZNsCs8DmzOkSNHbGp4/C6wmDJlih7O26xZMz3MOmvWrB4vlfWHfnseiMsFcLOhcbnoRiZPPcySxQQ9OGoUeZ0wfdTIE0YshBuO9pNPPpFFixZJlixZpF69elKnTp3I1fDwlfPmzRMcRIqDeXHOGoZrr7nmGg+X6PKsm/Bi8w1MCwpCPSyAaGEU1MNCmBZEZZIeHDUKL6hXRo08ZcQS48ak9Dlz5giWntauXVsn91etWlXSpUtnwWPmfhRnz56V5cuXy8qVKwUmDGWE8SxXrpz7mbMhBya92GwonueipB5mSUY9qEdyBDhq9BcdL44aedaIhbBfuHBBFi5cqKYFH5xdiV36sf1F0aJFzXp6U8jNxo0bdT7c0qVLBRMKUQ6YS/SApU6d2lNliTazbGiiJWbv9dTDXr7Rxk49oiVm7/Wm6sFRI2+OGnneiF35uKGnDEcV4Hv79u1qzCpXrix58+aVggULGrOtw4EDB2Tbtm3y+++/a6/X2rVr5ZZbbpEKFSpI2bJl5fbbb7f3TWJY7Ka+2AzD5Fh2qIdjqCNKiHpEhMmxi7ygB0eNHKsOcSfkOyOWmAiG92BwtmzZot8wPufOnVNDVqRIEcmePbvkyZNHPzBq1113XdxAE0dw8uRJ2b17t+zdu1c/2Ol+8+bNmo9rr71W8wGjWKhQISlTpoxvhlVjgeiFF1ss5fLqPdTDLOWoB/WIlQBHjWIl59x9vjZiSWE8duyYGqGdO3eqSdqzZ4/s27dPjh49KkeOHNFFAJkzZ9bvXLly6YayadOm1Q/mn+Fz6dIlOX/+vJo6fOODLuGDBw8K4j9+/Lh+YzVjtmzZEszejTfeKPjAgCENhr8IsKExqzZQD+phFgGzcuPl54OjRmbVJeQmcEYsOQlgrGCiQkYKKxRPnTp1lelCHInNGf47Y8aM2qOW2Mjh3xkiI+DlF1tkJfTWVdTDLL2oB/WwgwBHjeygGn2cNGLRM+MdNhBgQ2MD1DiipB5xwLPhVuphA9Q4ovSzHhw1iqNixHgrjViM4HibtQTwYmMwiwCG4BnMIMDnwwwdEuciiM8HR43sqYc0YvZwZawkQAIkQAKJCLz00kv6f6FvU+C8/fbbek7v0KFD9ZuBBJwmQCPmNHGmRwIkQAIBJGCqEYMU2Lexe/fu8re//U2GDx8uN998cwAVYpHdIkAj5hZ5pksCJEACASJgshELyTBw4EAZNGiQvPnmm9KpU6cAqcOiukmARsxN+kybBEiABAJCwAtGDFKsWLFCe8cKFy6shuz6668PiEIsplsEaMTcIs90SYAESCBABLxixEKS9O7dW8aNG6dDlS1atAiQUiyq0wRoxJwmzvRIgARIIIAEvGbEINGXX36pvWM47xeGDBt6M5CA1QRoxKwmyvhIgARIgASuIuBFI4ZC4IggmLH58+frUOU999xDdUnAUgI0YpbiZGQkQAIkQAJJEfCqEQuVZerUqWrI2rRpI4MHD6bIJGAZARoxy1AyIhIgARIggXAEvG7EUK7Dhw/rXmMbNmzQocoqVapQcBKImwCNWNwIGQEJkAAJkEBKBPxgxEJl/PDDD7V3rGfPnvLCCy+kVHT+nQSSJUAjxgpCAiRAAiRgOwE/GTHA2rFjh5qxEydO6NyxUqVK2c6QCfiTAI2YP3VlqUiABEjAKAJ+M2IhuG+99ZYaMgxVPvnkk0YxZ2a8QYBGzBs6MZckQAIk4GkCfjViEGXdunU6dyxTpkxqyPLnz+9prZh5ZwnQiDnLm6mRAAmQQCAJ+NmIhQR95ZVXZMiQIWrGOnToEEidWejoCdCIRc+Md5AACZAACURJIAhGDEiWL1+uQ5XFixfXuWPZs2ePkhQvDxoBGrGgKc7ykgAJkIALBIJixEJoe/XqJRMmTNDesWbNmrlAnEl6hQCNmFeUYj5JgARIwMMEgmbEINWcOXN07ljt2rXVkKVJk8bDCjLrdhGgEbOLLOMlARIgARJIIBBEI4bCnzt3TocqFy1apGbs7rvvZq0ggcsI0IixQpAACZAACdhOIKhGLAR28uTJasjatWsngwYNsp03E/AOARox72jFnJIACZCAZwkE3YhBuIMHD+pQ5ZYtW7R3rHLlyp7Vkxm3jgCNmHUsGRMJkAAJkEAYAjRif4EZM2aMGrLevXtLnz59WGcCToBGLOAVgMUnARIgAScI0IhdTvnXX3/VocpTp05p79itt97qhAxMw0ACNGIGisIskQAJkIDfCNCIJa0o9hp75plndM+xJ554wm+yszwREKARiwASLyEBEiABEoiPAI1YeH4//vijDlVmy5ZNe8duuumm+GBHcPfp06fl+PHj+jl27JgeXo5/wyrPCxcuyPnz5/UbAdtupE2bVr/TpUsnGTJk0OOcsmTJIpkzZ9bv9OnTR5AqL0mKAI0Y6wUJkAAJkIDtBGjEUkY8YMAAGTZsmJoxrK6MNxw+fFi2bdsmO3fulN27d8uePXtk3759cvToUfnjjz8uM1I5c+aUVKlSqeEKmS58I4RMGb7xuXTpkhw4cEANXMjIZcyYUbJmzSp58uTRz4033qifggULqsFkCE+ARoy1gwRIgARIwHYCNGKRIV66dKnOHStZsqQaMpibSALmmq1du1ZXZOIbBgwBRqhw4cKSI0eOBJOUN29e7dWyMiB9GL29e/fq59ChQ5oX5AMGD/koVaqU5qVMmTKWp29lWZyOi0bMaeJMjwRIgAQCSIBGLDrRe/ToIZ988onOHbv//vuTvHnlypWyZs0aWb16tfZ4lS5dWipVqiT58uVT42PKOZehnrldu3bJihUr1Ciit6xChQpStmxZ/Q5yoBELsvosOwmQAAk4RIBGLHrQX3zxhc4dq1evnhoyzNlauHChHiyOT/ny5aVKlSpSokQJKVSoUPQJuHgHess2bNgg6AGEmUQ5qlatKjVq1NB5aEEKNGJBUptlJQESIAGXCNCIxQb+zJkz0rp1a1m1apUUKFBAGjdurL1eMC2pU6eOLVLD7oLBhLFED9+8efOkWrVqaj4rVqxoWE7tyQ6NmD1cGSsJkAAJkEAiAjRi0VUHrF7E0CTOqMREehwcXrdu3egi8ejVCxYskLlz5wqGNO+66y5p2bKlLiDwa6AR86uyLBcJkAAJGESARiwyMfbv3y+TJk2SmTNnSqtWraRZs2a6ujGI4ciRIzJ16lT59NNPpVGjRvLggw/qogO/BRoxvynK8pAACZCAgQRoxJIX5eLFi/Lee+/J1q1bpXr16tK0aVMDVXQvS9OmTZPFixdLsWLFpGvXru5lxIaUacRsgMooSYAESIAELidAIxa+RkyfPl1GjBihBqN58+asOskQQO8YDCu2+GjSpIkvWNGI+UJGFoIESIAEzCZAI3a1Pth3C1wwOb1t27ZmC2hY7j766CP55ptvpF+/fro/mpcDjZiX1WPeSYAESMAjBGjELhcKvWCTJ09WI1G0aFGPqGhWNjdu3KhGFqtK77vvPrMyF0VuaMSigMVLSYAESIAEYiNAI/YXt0GDBumGpg899FBsMHnXZQTGjRunRzf17NnTk2RoxDwpGzNNAiRAAt4iQCP2P726deumvTd33323twQ0PLezZ8/WLS+w8a3XAo2Y1xRjfkmABEjAgwRoxEQee+wxeeSRRwKzUanT1RSbwn788cc6md9LgUbMS2oxryRAAiTgUQJBN2Lt27eX/v37S/78+T2qoDey/csvv8irr74qY8aM8UaG/y+XNGKekYoZJQESIAHvEgiyEevbt6888MADUrJkSe8K6KGc41BxLIbAQggvBBoxL6jEPJIACZCAxwkE1YhhqOz8+fPSsWNHjyvorex/8MEHkjFjRt2N3/RAI2a6QswfCZAACfiAQBCN2IYNG3SLCvSIMThPAD1ibdq0kSJFijifeBQp0ohFAYuXkgAJkAAJxEYgiEbs6aef1i0qbrvtttig8a64CKxatUoPTn/ttdfiisfum2nE7CbM+EmABEiABHTjTYTQt9+R/PDDDzJhwgTjTECDBg1k1qxZin/+/Pm6gGDixIly9OhRwW71gwcPTlaa4cOHy/bt2+WNN97whIQwwx06dJBSpUoZm18aMWOlYcZIgARIwD8EgmbEXn75ZalatarUqlXLKBHTpk2rc9YQYMiwnxn+bdmyZfLCCy/IwoULfWXE5s2bJ99995306dPHKB0SZ4ZGzFhpmDESIAES8A+BoBmxe+65Rz777DO59tprjRGxcePGMmPGDF29uXr1auncubPUqVNHkNcKFSrI/v37dbPZf/zjH/Lcc8/J119/rXlfuXKlPPvss/r/iXvEfvrpJ41j/fr1ekwT9u8ybRj21KlT0qJFi4ReQGPESJQRGjETVWGeSIAESMBnBIJkxH788Udt+E3shUncI4YhOxgxTGhP3COG/07JiGHeVfHixfVYIawIxTAs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" />
+                </div>
+                <div class="tooltip-text">
+                  <p>Cada entidad genera sus respectiva tabla</p>
+                  <p>La clave primaria de las tablas de las subentidades será la misma que la de la subentidad.</p>
+                  <p style="font-size:0.6em">En caso de que la generalización sea total, se podría evitar la creación de la tabla de la superentidad.</p>
+                </div>
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="schema-box">
+                <div class="schema-title">estudios</div>
+                <div>(<span class="pk">id_estudio</span>, nombre, nivel_mecu)</div>
+              </div>
+              <div class="schema-box">
+                <div class="schema-title">obligatorios</div>
+                <div>(<span class="pk"><span class="fk">id_estudio</span></span>, nivel)</div>
+                <div class="small-text">
+                  FK: id_estudio REF estudios
+                </div>
+              </div>
+              <div class="schema-box">
+                <div class="schema-title">grados_fp</div>
+                <div>(<span class="pk"><span class="fk">id_estudio</span></span>, nombre, grado, titulo)</div>
+                <div class="small-text">
+                  FK: id_estudio REF estudios
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section>
+          <h2>Transformación de Relación Reflexiva</h2>
+          <div class="slide-columns">
+            <div class="left-column">
+              <div class="tooltip-container">
+                <div class="svg-container">
+                  <svg viewBox="150 150 400 300" width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="270.05981" y="259.78967" width="158.85091" height="39.716705" fill="#ffffff" stroke="#000000" stroke-width="2.16973"/>
+                    <text x="348.39374" y="284.64801" text-anchor="middle" font-size="16px">estudios</text>
+                    <ellipse cx="247.43259" cy="192.9278" rx="60" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="247.43259" y="197.9278" text-anchor="middle" font-size="14.6667px" style="font-family:sans-serif;text-decoration:underline">id_estudio</text>
+                    <ellipse cx="351.43259" cy="192.9278" rx="40" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="351.43259" y="197.9278" text-anchor="middle" font-size="14px">nombre</text>
+                    <ellipse cx="455.43259" cy="192.9278" rx="40" ry="25" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <text x="455.43259" y="197.9278" text-anchor="middle" font-size="14px">nivel_mecu</text>
+                    <polygon points="450,380 500,400 550,380 500,360" fill="#ffffff" stroke="#000000" stroke-width="2" transform="translate(-150.20312,31.930281)"/>
+                    <text x="349.79688" y="415.93027" text-anchor="middle" font-size="14px">requiere</text>
+                    <text x="382.8627" y="-419.06543" text-anchor="end" font-size="12px" transform="rotate(90)">requisito</text>
+                    <text x="-408.45325" y="275.48898" text-anchor="start" font-size="12px" transform="rotate(-90)">requerido_para</text>
+                    <path d="m 252.18058,218.25059 78.57001,41.41861" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="m 352.06438,218.69314 0.0643,41.40377" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="m 452.28441,219.29885 -76.98773,39.76217" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="m 400.62055,412.52017 h 11.0265 l 0,-112.43324" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="m 300.37579,411.83534 h -14.54707 l 0,-112.34918" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="m 277.58155,299.93361 8.25228,8.25228 8.61243,-8.61243" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <path d="m 403.22262,299.93361 8.25228,8.25228 8.61243,-8.61243" style="fill:none;stroke:#000000;stroke-width:2"/>
+                    <circle cx="285.95029" cy="312.25119" r="5" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <circle cx="411.50705" cy="313.59467" r="5" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                  </svg>
+                </div>
+                <div class="tooltip-text">
+                  <p>Para la transformación se atiende a las cardinalidades de la relación.</p>
+                  <p>1:1 o 1:N -> propagan la clave; N:M -> genera tabla intermedia</p>
+                  <p>La propagación se hace sobre la misma tabla.</p>
+                </div>
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="schema-box">
+                <div class="schema-title">estudios</div>
+                <div>(<span class="pk">id_estudio</span>, nombre, nivel_mecu)</div>
+              </div>
+              <div class="schema-box">
+                <div class="schema-title">requisitos</div>
+                <div>(<span class="pk"><span class="fk">id_estudio_requerido</span>, <span class="fk">id_estudio_requisito</span></span>)</div>
+                <div class="small-text">
+                  FK: id_estudio_requerido REF estudios(id_estudio)<br>
+                  FK: id_estudio_requisito REF estudios(id_estudio)
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      transition: 'slide',
+      controls: true,
+      progress: true,
+      center: true,
+      slideNumber: true,
+      overview: true,
+      keyboard: true,
+      touch: true,
+      help: true
+    });
+  </script>
+</body>
+</html>
