@@ -1,0 +1,4 @@
+Crea un archivo llamado "prueba1.xml" sobre una biblioteca que contiene libros, y de cada libro se anotará el nombre, el autor y el año. Cada libro podrá tener un solo nombre y un solo año pero varios autores. Introduce al menos los datos de 3 libros. 
+
+El comienzo del archivo será: 
+<?xml version="1.0" encoding="UTF-8"?>

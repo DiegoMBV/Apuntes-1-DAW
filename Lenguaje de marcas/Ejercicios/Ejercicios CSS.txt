@@ -1,0 +1,92 @@
+1:
+HTML
+
+header con h1, p, section con a y img, footer y p en footer con tu nombre.
+
+CSS
+
+El tipo de letra cambiado
+
+h1 centrado, con color de fondo oscuro y color de letra claro.
+
+p justificado 
+
+a color de letra rojo tanto visitado como sin visitar. Centrado. Sin formato
+
+a subrayada al pasar el ratón por encima.
+
+imagen con borde (mínimo 2px) centrada. 
+
+footer: color de fondo, p dentro centrado, color de letra claro y tamaño letra pequeño.
+Aplicar padding y margin a varios elementos: p, header, footer, section, etc...
+
+2:
+HTML
+
+header con h1. Color de fondo, color de letra y centrado
+
+NAV
+
+Lista 2 enlaces a las 2 páginas: inicio y ratón. Mismo estilo que header. En línea, sin decoración de enlace pero subrayado al pasar por encima el ratón. 
+
+MAIN
+
+Imagen con borde con esquinas redondeadas. Formulario con nombre, edad, checkbox y enviar. Form con borde, color de fondo, padding y margin. 
+
+FOOTER
+Nombre (c) año.
+Volver arriba 
+Mismo estilo que header y nav.
+
+3:
+UT3. TABLAS, BORDES, MÁRGENES, DIMENSIONES, POSICIÓN, DISPLAY - CSS. 
+
+PELÍCULA LENGUAJES DE MARCAS 1ºDAW
+
+
+    Hacer una página sobre una película, su sinopsis, personajes principales y trailer. 
+
+    HEADER con título de la película centrado y siempre visible (sticky)
+
+    NAV: menú con lista de 2 elementos sin decoración (list-style) y elementos de la lista en horizontal (display: inline), con Inicio a la misma página y filmaffinity hacia la web de la película seleccionada, que se abrirá en otra página. 
+
+    MAIN con 4 SECTION: un párrafo con sinopsis, otra sección con 3 imágenes de la película centradas con misma altura con borde y separadas entre sí, un subtítulo (personajes principales) con una tabla de 2columnasx3filas, y un vídeo del trailer. 
+
+        TABLA: primera fila, color oscuro de fondo y letra clara para títulos de “personaje” y “descripción”. Esa primera fila tendrá el texto centrado. En la primera columna sus nombres y su foto, uno al lado del otro. En la columna de la derecha, párrafo con un poco de su vida: lugar de nacimiento, fecha de nacimiento, estado civil, hijos, películas en las que trabaja, etc. 
+
+        TRAILER: en el cuarto SECTION, después de la tabla, se incluirá el trailer de la película, centrado y con borde. No se reproducirá automáticamente. 
+
+
+    FOOTER con tu nombre © 2024 - 1ºDAW. Y opción de “Volver arriba”
+
+
+
+    CSS: 
+
+        background: la primera fila de la tabla será de un color oscuro con letras blancas. Header y footer tendrán el mismo color de fondo, además de centrados. 
+
+
+    enlaces: color de letra claro, sin subrayado. Al pasar el ratón por encima se verán de otro color. 
+
+
+    border: la tabla tendrá borde (colapsado o no) del estilo, grosor y color deseado.
+
+
+    padding y margin: ajustar para que nada quede demasiado pegado. La tabla debe ocupar el 100% pero en toda la página habrá un espacio a los lados excepto en header, nav y footer, que quedarán sin espacio. 
+
+
+    dimensiones tabla:
+
+        width y height: especificar anchura y altura de las columnas. La columna izquierda será de menor anchura que la derecha, en %. Las dimensiones (w y h) de todas las celdas de la columna de la izquierda deben ser iguales, al igual que la altura de todas las filas. Añadiremos overflow para que aparezca barra de desplazamiento si hiciera falta (para que funcione, el texto debe ir en caja, p, div o similar). 
+
+        La tabla ocupará el 100% del ancho y el texto estará justificado. 
+
+
+    posición: 
+
+        float: añadimos una foto (pequeña que se ajuste al tamaño de la celda) de cada actor o actriz en la celda junto con su nombre, y debe flotar a su derecha. (columna izquierda de la tabla)
+
+        position: insertar la imagen de la película en la esquina superior derecha de la página (fixed). Esta imagen quedará a la vista aunque nos desplacemos hacia abajo. Además el header será visible siempre en la parte superior (sticky)
+
+        display: flex. Las 3 imágenes de la película debajo de la sinopsis deben quedar en horizontal, centradas, con borde, separadas algunos píxeles entre sí y con misma altura. 
+

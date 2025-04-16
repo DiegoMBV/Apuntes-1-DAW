@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<empresa>
+  <empleado>
+    <id>1</id>
+    <nombre>Ana García</nombre>
+    <edad>30</edad>
+    <departamento>IT</departamento>
+    <salario>2500</salario>
+  </empleado>
+  <empleado>
+    <id>2</id>
+    <nombre>Carlos López</nombre>
+    <edad>45</edad>
+    <departamento>Finanzas</departamento>
+    <salario>3200</salario>
+  </empleado>
+  <empleado>
+    <id>3</id>
+    <nombre>Elena Ruiz</nombre>
+    <edad>29</edad>
+    <departamento>IT</departamento>
+    <salario>2700</salario>
+  </empleado>
+  <empleado>
+    <id>4</id>
+    <nombre>David Fernández</nombre>
+    <edad>40</edad>
+    <departamento>Recursos Humanos</departamento>
+    <salario>2900</salario>
+  </empleado>
+  <empleado>
+    <id>5</id>
+    <nombre>Beatriz Martínez</nombre>
+    <edad>50</edad>
+    <departamento>Finanzas</departamento>
+    <salario>3100</salario>
+  </empleado>
+  <empleado>
+    <id>6</id>
+    <nombre>Alberto Sánchez</nombre>
+    <edad>35</edad>
+    <departamento>IT</departamento>
+    <salario>2600</salario>
+  </empleado>
+</empresa>

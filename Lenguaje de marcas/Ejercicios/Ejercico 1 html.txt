@@ -1,0 +1,20 @@
+Copia el siguiente texto en un archivo nuevo en VSC, llamado prueba1.html. Comenta al lado de cada etiqueta (sólo la primera vez que aparezca), para qué sirve y si tiene atributos, qué significan. Prueba a cambiar el color de fondo, añadir un párrafo al final con tu nombre y añadir un elemento a la lista que ponga "HTML y CSS": 
+
+<html> <!-- Esto es un comentario -->
+    <head>
+        <title> Ejemplo de código HTML</title>
+    </head>
+    <body bgcolor="#ffaaaa">
+        <p>
+            <b>18 de septiembre de 2024</b>
+        </p>
+        <p><b> Bienvenido al modulo de “Lenguajes de Marcas y Sistemas de Gestión de Información” </b></p>
+        <p> En este curso aprenderás, entre otras cosas:<br/>
+        <ul>
+            <li>Las ventajas que ofrece XML </li>
+            <li>La creación de documentos bien formados </li>
+            <li>La creación de DTD</li>
+        </ul>
+        </p>
+    </body>
+</html>

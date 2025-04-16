@@ -1,0 +1,36 @@
+2:
+Tabla de 1 fila y 3 columnas.
+
+La tabla no llevará borde
+
+Las celdas llevarán borde distinto a "solid" y de color distinto al negro. Utilizar la propiedad "border-radius".
+
+El texto de las celdas estará centrado. 
+
+Color de fondo de las celdas igual que el borde pero otro tono. 
+
+Completar las 3 celdas como si fuese un menú (Inicio, contacto, Acerca de,...) y deben ser enlaces. 
+
+Centrar la tabla. 
+
+3:
+Haz un formulario como este(Imagen 1).  Cada input debe ser del tipo requerido. Todos los campos son obligatorios excepto la fecha de nacimiento. El formulario se enviará a un email. 
+
+4:
+Realiza un archivo HTML sobre un restaurante inventado, con las siguientes características:
+
+  1. Estructura básica correcta
+
+  2. En el "head" debe llevar todo lo visto en clase: meta, title, style. El cuerpo de la página se estructurará en 3 partes con etiquetas semánticas: header, main y footer. Además, deberá utilizar una fuente distinta a la que viene por defecto y un color de fondo en la página. 
+
+  3. Título en la página: nombre del restaurante. Logotipo del restaurante (llevará a la página del menú que se explica en el siguiente punto). 
+
+  4. Enlace al menú (texto o imagen): archivo menu.html con una tabla de 2 filas y 1 columna con borde colapsado y distinto a una línea. En la primera fila irá la palabra MENÚ, centrada. En la segunda fila, una lista anidada (ordenada y no ordenada en ese orden) con el menú: entrante (2 opciones), primero (2 opciones), segundo (2 opciones) y postre (2 opciones). En el encabezado de la página estará el nombre del restaurante y el logo, exactamente igual que en la página principal (repetir el header). Al pinchar en el logo, volveremos a la página principal. 
+
+  5. Párrafo con una breve introducción sobre el restaurante, lo mejor que tiene, la ubicación, etc. (en la página principal)
+
+      Resalta en negrita alguna palabra que veas importante. 
+
+  6. Formulario pidiendo el nombre del cliente (obligatorio), pregunta si ha visitado antes el restaurante con opciones radio, y el comentario que quiere dar sobre el restaurante, con botón de enviar y borrar datos. El formulario llevará borde con esquinas redondeadas y color de fondo. 
+
+ 7. En el pie de página: línea horizontal, enlace interno a la derecha de la página para ir al principio de esta, una pequeña imagen de un sobre que abrirá el gestor de correo electrónico para enviar sugerencias, y tu nombre. El pie de página debe ir con tamaño de letra menor al resto. 

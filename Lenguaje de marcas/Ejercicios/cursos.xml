@@ -1,0 +1,33 @@
+<cursos>
+    <curso codigo="DAW1">
+        <nombre>Desarrollo Web</nombre>
+        <profesor>María Pérez</profesor>
+    </curso>
+    <curso codigo="DAM1">
+        <nombre>Desarrollo de Aplicaciones Móviles</nombre>
+        <profesor>Carlos Gómez</profesor>
+    </curso>
+    <curso codigo="ASIR1">
+        <nombre>Administración de Sistemas</nombre>
+        <profesor>Ana López</profesor>
+    </curso>
+
+    <alumnos>
+        <alumno id="A001">
+            <nombre>Juan García</nombre>
+            <curso_ref>DAW1</curso_ref>
+        </alumno>
+        <alumno id="A002">
+            <nombre>Laura Fernández</nombre>
+            <curso_ref>DAM1</curso_ref>
+        </alumno>
+        <alumno id="A003">
+            <nombre>Pedro Sánchez</nombre>
+            <curso_ref>ASIR1</curso_ref>
+        </alumno>
+        <alumno id="A004">
+            <nombre>Elena Martín</nombre>
+            <curso_ref>DAW1</curso_ref>
+        </alumno>
+    </alumnos>
+</cursos>

@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<clinicasVeterinarias>
+
+  <nombre>Kivet</nombre>
+
+  <pais>España</pais>
+
+  
+
+  <clinicas>
+
+    <clinica id="kv1">
+
+      <nombre>Kivet Madrid Bravo Murillo</nombre>
+
+      <creacion>2000</creacion>
+
+      <extension>500</extension>
+
+      <ciudad>Madrid</ciudad>
+
+    </clinica>
+
+    <clinica id="kv2">
+
+      <nombre>Kivet Madrid Ciudad de la Imagen</nombre>
+
+      <creacion>2010</creacion>
+
+      <extension>550</extension>
+
+      <ciudad>Madrid</ciudad>
+
+    </clinica>
+
+    <clinica id="kv3">
+
+      <nombre>Kivet Madrid Parque Oeste</nombre>
+
+      <creacion>2012</creacion>
+
+      <extension>600</extension>
+
+      <ciudad>Madrid</ciudad>
+
+      <etologo>Fernando Calisto Zeta</etologo>
+
+    </clinica>
+
+    <clinica id="kv4">
+
+      <nombre>Kivet Valladolid Río Shoping</nombre>
+
+      <creacion>2010</creacion>
+
+      <extension>600</extension>
+
+      <ciudad>Valladolid</ciudad>
+
+    </clinica>
+
+    <clinica id="kv5">
+
+      <nombre>Kivet Badajoz La Serena</nombre>
+
+      <creacion>2000</creacion>
+
+      <extension>450</extension>
+
+      <ciudad>Badajoz</ciudad>
+
+    </clinica>
+
+    <clinica id="kv6">
+
+      <nombre>Kivet Cartagena Espacio Mediterráneo</nombre>
+
+      <creacion>2000</creacion>
+
+      <extension>450</extension>
+
+      <ciudad>Badajoz</ciudad>
+
+    </clinica>
+
+  </clinicas>
+
+  
+
+  <practicas>
+
+    <practica id="p01" clinica="kv1">
+
+      <nombre>Vacunación</nombre>
+
+      <creditos>3</creditos>
+
+      <cuatrimestre>1</cuatrimestre>
+
+    </practica>
+
+    <practica id="p02" clinica="kv1">
+
+      <nombre>Dermatología</nombre>
+
+      <creditos>6</creditos>
+
+      <cuatrimestre>2</cuatrimestre>
+
+    </practica>
+
+    <practica id="p03" clinica="kv2">
+
+      <nombre>Desparasitación</nombre>
+
+      <creditos>4</creditos>
+
+      <cuatrimestre>1</cuatrimestre>
+
+    </practica>
+
+    <practica id="p04" clinica="kv2">
+
+      <nombre>Cirugía general</nombre>
+
+      <creditos>12</creditos>
+
+      <cuatrimestre>1</cuatrimestre>
+
+    </practica>
+
+    <practica id="p05" clinica="kv4">
+
+      <nombre>Traumatología</nombre>
+
+      <creditos>6</creditos>
+
+      <cuatrimestre>2</cuatrimestre>
+
+    </practica>
+
+    <practica id="p06" clinica="kv3">
+
+      <nombre>Etología</nombre>
+
+      <creditos>12</creditos>
+
+      <cuatrimestre>2</cuatrimestre>
+
+    </practica>
+
+    <practica id="p07" clinica="kv4">
+
+      <nombre>Análisis clínicos</nombre>
+
+      <creditos>3</creditos>
+
+      <cuatrimestre>2</cuatrimestre>
+
+    </practica>
+
+    <practica id="p08" clinica="kv1">
+
+      <nombre>Medicina Felina</nombre>
+
+      <creditos>10</creditos>
+
+      <cuatrimestre>1</cuatrimestre>
+
+    </practica>
+
+    <practica id="p09" clinica="kv6">
+
+      <nombre>Animales Exóticos</nombre>
+
+      <creditos>7</creditos>
+
+      <cuatrimestre>2</cuatrimestre>
+
+    </practica>
+
+  </practicas>
+
+  
+
+  <alumnos>
+
+    <alumno id="a01">
+
+      <apellido1>Condama</apellido1>
+
+      <apellido2>Zónica</apellido2>
+
+      <nombre>Ana</nombre>
+
+      <sexo>Mujer</sexo>
+
+      <itinerarios>
+
+        <clinica codigo="kv1"/>
+
+        <practicas>
+
+          <practica codigo="p01"/>
+
+          <practica codigo="p03"/>
+
+          <practica codigo="p05"/>
+
+          <practica codigo="p09"/>
+
+        </practicas>
+
+      </itinerarios>
+
+    </alumno>
+
+    <alumno id="a02">
+
+      <apellido1>Gartija</apellido1>
+
+      <apellido2>Verde</apellido2>
+
+      <nombre>Estela</nombre>
+
+      <sexo>Mujer</sexo>
+
+      <itinerarios>
+
+        <clinica codigo="kv2"/>
+
+        <practicas>
+
+          <practica codigo="p02"/>
+
+          <practica codigo="p01"/>
+
+        </practicas>
+
+      </itinerarios>
+
+    </alumno>
+
+    <alumno id="a03">
+
+      <apellido1>Tilla</apellido1>
+
+      <apellido2>Pasada</apellido2>
+
+      <nombre>Víctor</nombre>
+
+      <sexo>Hombre</sexo>
+
+      <itinerarios>
+
+        <clinica codigo="kv2"/>
+
+        <practicas>
+
+          <practica codigo="p02"/>
+
+          <practica codigo="p01"/>
+
+          <practica codigo="p04"/>
+
+          <practica codigo="p09"/>
+
+        </practicas>
+
+      </itinerarios>
+
+    </alumno>
+
+    <alumno id="a04">
+
+      <apellido1>Nito</apellido1>
+
+      <apellido2>del Bosque</apellido2>
+
+      <nombre>Elena</nombre>
+
+      <sexo>Mujer</sexo>
+
+      <itinerarios>
+
+        <clinica codigo="kv1"/>
+
+        <practicas>
+
+          <practica codigo="p02"/>
+
+          <practica codigo="p01"/>
+
+          <practica codigo="p07"/>
+
+        </practicas>
+
+      </itinerarios>
+
+    </alumno>
+
+  </alumnos>
+
+</clinicasVeterinarias>
