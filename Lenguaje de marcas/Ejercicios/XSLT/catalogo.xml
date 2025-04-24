@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="catalogo.xsl"?><catalogo>
+<libro>
+<titulo>El principito</titulo>
+<autor>Antoine de Saint-Exupéry</autor>
+<precio>12.99</precio>
+</libro>
+<libro>
+<titulo>Cien años de soledad</titulo>
+<autor>Gabriel García Márquez</autor>
+<precio>18.50</precio>
+</libro>
+<libro>
+<titulo>1984</titulo>
+<autor>George Orwell</autor>
+<precio>15.00</precio>
+</libro>
+</catalogo>

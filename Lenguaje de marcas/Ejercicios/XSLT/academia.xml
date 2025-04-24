@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="academia.xsl"?><academia>
+<clases>
+<clase codigo="C101">
+<nombre>Inglés A2</nombre>
+<dia>Lunes</dia>
+</clase>
+<clase codigo="C102">
+<nombre>Matemáticas</nombre>
+<dia>Martes</dia>
+</clase>
+<clase codigo="C103">
+<nombre>Informática Básica</nombre>
+<dia>Miércoles</dia>
+</clase>
+<clase codigo="C104">
+<nombre>Francés B1</nombre>
+<dia>Jueves</dia>
+</clase>
+</clases>
+<alumnos>
+<alumno codigo="A001">
+<nombre>Ana Pérez</nombre>
+<clase>C101</clase>
+<clase>C103</clase>
+<deuda>0</deuda>
+</alumno>
+<alumno codigo="A002">
+<nombre>Luis García</nombre>
+<clase>C102</clase>
+<deuda>30</deuda>
+</alumno>
+<alumno codigo="A003">
+<nombre>Carmen López</nombre>
+<clase>C103</clase>
+<deuda>0</deuda>
+</alumno>
+<alumno codigo="A004">
+<nombre>David Ruiz</nombre>
+<clase>C104</clase>
+<clase>C101</clase>
+<deuda>15</deuda>
+</alumno>
+<alumno codigo="A005">
+<nombre>Sara Martínez</nombre>
+<clase>C101</clase>
+<deuda>25</deuda>
+</alumno>
+</alumnos>
+</academia>
